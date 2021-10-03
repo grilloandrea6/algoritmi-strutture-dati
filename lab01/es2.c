@@ -121,14 +121,14 @@ int menuParola(record *dati, int num) {
             break;
         case c_fine:
             printf("Arrivederci!\n");
-            return(0);
+            ret = 0;
             break;
 
         case c_errore:
         default:
             printf("Errore nella lettura del comando.\n");
 
-            return(-1);
+            ret = -1;
             break;
     }
     return(ret);

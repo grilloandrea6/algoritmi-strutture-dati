@@ -17,11 +17,11 @@
 #define MAX_RECORD      1000
 
 typedef enum {
-    c_print, c_ord_data, c_ord_codice, c_ord_partenza, c_ord_arrivo, c_ricerca, c_fine, c_errore
+    c_print, c_ord_data, c_ord_codice, c_ord_partenza, c_ord_arrivo, c_ricerca_lin, c_ricerca_bin, c_fine, c_errore
 } comandi;
 
 typedef enum {
-   data, ora, codice, partenza, arrivo
+   o_data, o_ora, o_codice, o_partenza, o_arrivo
 } ordinamento;
 
 typedef struct{
@@ -44,6 +44,8 @@ void printRecord(record*);
 int f_print(record **dati_punt, int num_record);
 int sort(record **dati, int num_record, ordinamento ord);
 int index_set(record **dati, int num_record);
+int f_ricerca_lin(record **dati_punt,int num);
+int f_ricerca_bin(record **dati_punt,int num);
 
 int main() {
     FILE * fp;
@@ -82,9 +84,9 @@ int main() {
 comandi leggiComando () {
     comandi c;
     char cmd[MAXL_COMANDO];
-    char tabella[c_errore][MAXL_COMANDO] = {"stampa","orddata","ordcodice","ordpartenza","ordarrivo","ricerca","fine"};
+    char tabella[c_errore][MAXL_COMANDO] = {"stampa","orddata","ordcodice","ordpartenza","ordarrivo","ricercalin","ricercabin","fine"};
 
-    printf("Menù comandi:\n\t- stampa: stampa dei contenuti del log\n\t- orddata: ordinamento del vettore per data, e a parità di date per ora\n\t- ordcodice: ordinamento del vettore per codice di tratta\n\t- ordpartenza: ordinamento del vettore per stazione di partenza\n\t- ordarrivo: ordinamento del vettore per stazione di arrivo\n\t- ricerca: ricerca di una tratta per stazione di partenza\n\t- fine: terminare il programma\nInserisci il comando: ");
+    printf("Menù comandi:\n\t- stampa: stampa dei contenuti del log\n\t- orddata: ordinamento del vettore per data, e a parità di date per ora\n\t- ordcodice: ordinamento del vettore per codice di tratta\n\t- ordpartenza: ordinamento del vettore per stazione di partenza\n\t- ordarrivo: ordinamento del vettore per stazione di arrivo\n\t- ricercalin: ricerca -lineare- di una tratta per stazione di partenza\n\t- ricercabin: ricerca -binaria- di una tratta per stazione di partenza\n\t- fine: terminare il programma\nInserisci il comando: ");
     scanf("%s",cmd);
 
     strToLower(cmd);
@@ -114,33 +116,36 @@ int menuParola(record **dati_punt, int num) {
 
     switch (cmd) {
         case c_print:
-            ret = f_print(dati_punt,num);
-            break;
+		ret = f_print(dati_punt,num);
+            	break;
         case c_ord_data:
-		ord = ora;
+		ord = o_ora;
 		sort(dati_punt,num,ord);		
-		ord = data;
+		ord = o_data;
 		sort(dati_punt,num,ord);
-		f_print(dati_punt,num);
+		ret = f_print(dati_punt,num);
             break;
         case c_ord_codice:
-		ord = codice;
+		ord = o_codice;
 		sort(dati_punt,num,ord);
-		f_print(dati_punt,num);
+		ret = f_print(dati_punt,num);
 	    break;
         case c_ord_partenza:
-		ord = partenza;		
+		ord = o_partenza;		
 		sort(dati_punt,num,ord);
-		f_print(dati_punt,num);
+		ret = f_print(dati_punt,num);
             break;
         case c_ord_arrivo:
-		ord = arrivo;
+		ord = o_arrivo;
 		sort(dati_punt,num,ord);
-		f_print(dati_punt,num);
+		ret = f_print(dati_punt,num);
             break;
-	/*case c_ricerca:
-
-	    break;*/
+	case c_ricerca_lin:
+		ret = f_ricerca_lin(dati_punt,num);
+	    break;
+	case c_ricerca_bin:
+		ret = f_ricerca_bin(dati_punt,num);
+		break;
         case c_fine:
             printf("Arrivederci!\n");
             return(0);
@@ -149,7 +154,6 @@ int menuParola(record **dati_punt, int num) {
         case c_errore:
         default:
             printf("Errore nella lettura del comando.\n");
-
             return(-1);
             break;
     }
@@ -201,19 +205,19 @@ int compare(const void *a, const void *b, void *ord) {
 	record *ptr_to_a = *(record**)a;
 	record *ptr_to_b = *(record**)b;
 	switch( *(ordinamento*)ord) {
-		case data:
+		case o_data:
 			ret = strcmp(ptr_to_a->data,(*((record**)b))->data);
 			break;
-		case ora:
+		case o_ora:
 			ret = strcmp(ptr_to_a->ora_partenza,(*((record**)b))->ora_partenza);
 			break;
-		case codice:
+		case o_codice:
 			ret = strcmp(ptr_to_a->codice_tratta,(*((record**)b))->codice_tratta);
 			break;
-		case partenza:
+		case o_partenza:
 			ret = strcmp(ptr_to_a->partenza,(*((record**)b))->partenza);
 			break;
-		case arrivo:
+		case o_arrivo:
 			ret = strcmp(ptr_to_a->destinazione,(*((record**)b))->destinazione);
 			break;
 	}   
@@ -232,3 +236,68 @@ int index_set(record **dati, int num_record) {
 		dati[i]->index = i;
 }
 
+int f_ricerca_lin(record **dati_punt,int num) {
+	char partenza[MAXL + 1],tmp[MAXL + 1];
+	printf("Inserisci il nome della stazione di partenza che vuoi ricercare: ");
+	if(scanf(" %s",partenza) != 1) return(-1);
+
+	for(int i = 0; i < num; i++) {
+		strncpy(tmp,dati_punt[i]->partenza,strlen(partenza));
+		tmp[strlen(partenza)] = '\0';
+
+		if(strcmp(partenza,tmp) == 0) printRecord(dati_punt[i]);
+	}
+}
+
+
+int f_ricerca_bin(record **dati_punt,int num) {
+	char partenza[MAXL + 1], tmp[MAXL+1];
+
+	printf("Inserisci il nome della stazione di partenza che vuoi ricercare: ");
+	if(scanf(" %s",partenza) != 1) return(-1);
+
+	// data needs to be sorted
+	ordinamento ord = o_partenza;		
+	sort(dati_punt,num,ord);
+
+	int found = 0;
+	int i = num / 2, cmp,n_iterations=0;
+
+	while(!found){
+		strncpy(tmp,dati_punt[i]->partenza,strlen(partenza));
+		tmp[strlen(partenza)] = '\0';
+		
+		cmp = strcmp(partenza,tmp);
+		if(cmp > 0) {if(i == 3*i/2) i++; else i = 3*i/2;}
+		else if(cmp < 0) {if(i == i/2) i--; else i = i/2;}
+		else found = 1;
+		
+		if(i < 0 || i > num || n_iterations > num) {
+			printf("Non trovato\n");
+			return -1;
+		}
+		n_iterations++;
+	}
+	printRecord(dati_punt[i]);
+
+	// controllo se ce ne sono altri subito prima o dopo di quello trovato
+	//dopo
+	for(int j = i+1; found && j < num; j++){
+		strncpy(tmp,dati_punt[j]->partenza,strlen(partenza));
+		if(strcmp(partenza,tmp) == 0)
+			printRecord(dati_punt[j]);
+		else
+			found = 0;
+			
+	}
+
+	//prima
+	found = 1;
+	for(int j = i-1; found && j >-1; j--){
+		strncpy(tmp,dati_punt[j]->partenza,strlen(partenza));
+		if(strcmp(partenza,tmp) == 0)
+			printRecord(dati_punt[j]);
+		else
+			found = 0;	
+	}
+}
