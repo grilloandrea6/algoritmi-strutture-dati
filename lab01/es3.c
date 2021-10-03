@@ -1,7 +1,7 @@
 /*
- * Laboratorio 6 Esercizio 1
+ * Laboratorio 1 Esercizio 3
  * Autore: Andrea Grillo
- * Data: Maggio 2021
+ * Data: Ottobre 2021
  */
 
 #include <stdio.h>
