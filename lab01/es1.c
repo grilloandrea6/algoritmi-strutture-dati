@@ -1,3 +1,9 @@
+/*
+ * Laboratorio 1 Esercizio 1
+ * Autore: Andrea Grillo
+ * Data: Ottobre 2021
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
