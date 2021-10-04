@@ -9,8 +9,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define _GNU_SOURCE
-
 #define MAXL_COMANDO    15
 #define MAXL            100
 #define FILENAME        "corse.txt"
