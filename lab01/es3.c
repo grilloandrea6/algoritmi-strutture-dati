@@ -262,7 +262,7 @@ int f_ricerca_bin(record **dati_punt,int num) {
 	int i = num / 2, cmp,n_iterations=0;
 
 	while(!found){
-		strncpy(tmp,dati_punt[i]->partenza,strlen(partenza));
+		strncpy(tmp, dati_punt[i]->partenza, strlen(partenza));
 		tmp[strlen(partenza)] = '\0';
 		
 		cmp = strcmp(partenza,tmp);
