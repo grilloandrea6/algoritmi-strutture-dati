@@ -77,7 +77,7 @@ int main() {
 	sort(dati_punt[0],numero_record,ord++);	
 
 	for(int i = 0; i < 4; i++)
-			sort(dati_punt[i],numero_record,ord++);
+		sort(dati_punt[i],numero_record,ord++);
 
 
 	printf("Ciao! Con questo programma puoi filtrare i dati del log.\n");
@@ -201,7 +201,7 @@ int f_carica_file(record ***dati_punt, int *num_record, record** dati) {
 	for(int i = 0; i < 4; i++)
 		free(dati_punt[i]);
 
-	free(*dati);
+	free(dati);
 
 	printf("Inserisci il nome del file da leggere: ");
 	scanf(" %s",filename);
