@@ -23,10 +23,12 @@ void main() {
 			printf("%d ",matrice[i][j]);
 		printf("\n");
 	}
+
 	// stampo vettori
 	printf("\nVettore 1: ");
 	for( i = 0; i < (nr * nc + 1) / 2 - 1; i++)
 		printf("%d ",v_bianchi[i]);
+	
 	printf("\nVettore 2: ");
 	for( i = 0; i < (nr * nc + 1) / 2; i++)
 		printf("%d ",v_neri[i]);
@@ -36,7 +38,6 @@ void main() {
 	for(i = 0; i < nr; i++)
 		free(matrice[i]);
 	free(matrice);
-return;
 	free(v_bianchi);
 	free(v_neri);
 }
@@ -70,7 +71,7 @@ int **malloc2dR(char* filename, int *nr, int *nc) {
     	}
 
 	for(int i = 0; i < *nr; i++) {
-		matrice[i] = (int *) malloc((*nc+10) * sizeof(int));
+		matrice[i] = (int *) malloc((*nc) * sizeof(int));
 
 		if(matrice[i] == NULL) {
 			fprintf(stderr,"Errore allocazione!\n");

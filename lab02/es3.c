@@ -1,5 +1,5 @@
 /*
- * Laboratorio 1 Esercizio 3
+ * Laboratorio 2 Esercizio 3
  * Autore: Andrea Grillo
  * Data: Ottobre 2021
  */
@@ -12,10 +12,9 @@
 #define MAXL_COMANDO    15
 #define MAXL            100
 #define FILENAME        "corse.txt"
-#define MAX_RECORD      1000
 
 typedef enum {
-    c_print, c_ricerca_bin, c_fine, c_errore
+    c_print, c_ricerca_bin, c_carica_file, c_fine, c_errore
 } comandi;
 
 typedef enum {
@@ -36,35 +35,34 @@ typedef struct{
 void printRecord(record *rec);
 comandi leggiComando ();
 void strToLower(char *str);
-int openFile(FILE **fp);
-int menuParola(record *dati_punt[][MAX_RECORD], int num);
-int getData(FILE **fp, record *dati);
-int f_print(record *dati_punt[][MAX_RECORD], int num_record);
+int openFile(FILE **fp,char *filename);
+int menuParola(record ***dati_punt, int *num, record* dati);
+int getData(FILE **fp, record **dati, record ***dati_punt);
+int f_print(record ***dati_punt, int num_record);
 int compare(const void *a, const void *b, void *ord);
 int sort(record **dati, int num_record, ordinamento ord);
-int index_set(record **dati, int num_record);
+void index_set(record **dati, int num_record);
 void getElement(char *tmp, record *record, int len, ordinamento ord);
-int f_ricerca_bin(record *dati_punt[][MAX_RECORD],int num);
+int f_ricerca_bin(record ***dati_punt,int num);
+int f_carica_file(record ***dati_punt, int *num_record, record** dati);
 
 
 int main() {
 	FILE * fp;
-	record dati[MAX_RECORD];
-	record *dati_punt[4][MAX_RECORD];
+	record *dati;
+    record **dati_punt[4];
+
 	int numero_record;
-	for(int i = 0; i < 4; i++)
-		for(int j = 0; j < MAX_RECORD; j++)
-			dati_punt[i][j] = &dati[j];
 
 	// apertura file
-	if(!openFile(&fp)) {
+	if(!openFile(&fp,FILENAME)) {
 		fprintf(stderr,"Errore nell'apertura del file!\n");
 		exit(EXIT_FAILURE);
 	}
 
 	// lettura dati da file
-	numero_record = getData(&fp, dati);
-	if(numero_record == -1) {
+	numero_record = getData(&fp, &dati, dati_punt);
+	if(dati == NULL) {
 		fprintf(stderr,"Errore nella lettura del file!\n");
 		exit(EXIT_FAILURE);
 	}
@@ -78,14 +76,15 @@ int main() {
 	// per la data ordino prima per ora
 	sort(dati_punt[0],numero_record,ord++);	
 
-	for(int i = 0; ord < o_errore; i++, ord++)
-		sort(dati_punt[i],numero_record,ord);
+	for(int i = 0; i < 4; i++)
+			sort(dati_punt[i],numero_record,ord++);
+
 
 	printf("Ciao! Con questo programma puoi filtrare i dati del log.\n");
 	printf("Caricati in memoria %d record.\n",numero_record);
 
 	// stampa menu e parsing
-	while(menuParola(dati_punt,numero_record));
+	while(menuParola(dati_punt,&numero_record,dati));
 
 	return 0;
 }
@@ -105,9 +104,9 @@ void printRecord(record *rec) {
 comandi leggiComando () {
     comandi c;
     char cmd[MAXL_COMANDO];
-    char tabella[c_errore][MAXL_COMANDO] = {"stampa","ricerca","fine"};
+    char tabella[c_errore][MAXL_COMANDO] = {"stampa","ricerca","carica","fine"};
 
-    printf("Menù comandi:\n\t- stampa: stampa dei contenuti del log\n\t- ricerca: ricerca dicotomica di una tratta\n\t- fine: terminare il programma\nInserisci il comando: ");
+    printf("Menù comandi:\n\t- stampa: stampa dei contenuti del log\n\t- ricerca: ricerca dicotomica di una tratta\n\t- carica: carica un unovo file di dati\n- fine: terminare il programma\nInserisci il comando: ");
     scanf("%s",cmd);
 
     strToLower(cmd);
@@ -125,46 +124,56 @@ void strToLower(char *str) {
         str[i] = tolower(str[i]);
 }
 
-int openFile(FILE **fp){
-    *fp = fopen(FILENAME,"r");
+int openFile(FILE **fp, char *filename){
+    *fp = fopen(filename,"r");
     return(*fp != NULL);
 }
 
-int menuParola(record *dati_punt[][MAX_RECORD], int num) {
-    comandi cmd = leggiComando();
-    ordinamento ord;
-    int ret;
+int menuParola(record ***dati_punt, int *num, record* dati) {
+	comandi cmd = leggiComando();
+	int ret;
 
-    switch (cmd) {
-        case c_print:
-		ret = f_print(dati_punt,num);
-            	break;
-	case c_ricerca_bin:
-		ret = f_ricerca_bin(dati_punt,num);
-		break;
-        case c_fine:
-            printf("Arrivederci!\n");
-            return(0);
-            break;
+	switch (cmd) {
+		case c_print:
+			ret = f_print(dati_punt,*num);
+			break;
+		case c_ricerca_bin:
+			ret = f_ricerca_bin(dati_punt,*num);
+			break;
+		case c_carica_file:
+			ret = f_carica_file(dati_punt,num,&dati);
+			break;
+		case c_fine:
+			printf("Arrivederci!\n");
+			return(0);
+			break;
 
-        case c_errore:
-        default:
-            printf("Errore nella lettura del comando.\n");
-            return(-1);
-            break;
-    }
-    return(ret);
+		case c_errore:
+		default:
+			printf("Errore nella lettura del comando.\n");
+			return(-1);
+			break;
+	}
+	return(ret);
 }
 
-int getData(FILE **fp, record *dati) {
-    int numero_record;
+int getData(FILE **fp, record **dati_ret, record ***dati_punt) {
+	int numero_record;
 
-    if(fscanf(*fp,"%d\n",&numero_record) != 1 || numero_record > MAX_RECORD)
-     return(-1);
+	record *dati = *dati_ret;
 
+	if(fscanf(*fp,"%d\n",&numero_record) != 1)
+		return(-1);
 
-    for(int i = 0; i < numero_record; i++) {
-	dati[i].index = i;
+	dati = (record *) malloc(numero_record * sizeof(record));
+
+	if(dati == NULL) {
+		printf("Errore allocazione memoria!");
+		exit(EXIT_FAILURE);
+	}
+
+	for(int i = 0; i < numero_record; i++) {
+		dati[i].index = i;
         if(fscanf(*fp,"%s %s %s %s %s %s %d",
                                 dati[i].codice_tratta,
                                 dati[i].partenza,
@@ -174,14 +183,51 @@ int getData(FILE **fp, record *dati) {
                                 dati[i].ora_arrivo,
                                 &dati[i].ritardo) != 7)    return(-1);
 
-        // DEBUG printRecord(dati[i]);
-    }
+	 	// DEBUG printRecord(&dati[i]);
+	}
+	for(int i = 0; i < 4; i++) {
+		dati_punt[i] = (record **) malloc(numero_record * sizeof(record *));
+		for(int j = 0; j < numero_record; j++)
+			dati_punt[i][j] = &dati[j];
+	}
 
-    return(numero_record);
+	return(numero_record);
 }
 
+int f_carica_file(record ***dati_punt, int *num_record, record** dati) {
+	FILE *fp;
+	char filename[MAXL];
 
-int f_print(record *dati_punt[][MAX_RECORD], int num_record) {
+	for(int i = 0; i < 4; i++)
+		free(dati_punt[i]);
+
+	free(*dati);
+
+	printf("Inserisci il nome del file da leggere: ");
+	scanf(" %s",filename);
+
+	// apertura file
+	if(!openFile(&fp,filename)) {
+		fprintf(stderr,"Errore nell'apertura del file!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// lettura dati da file
+	*num_record = getData(&fp, dati, dati_punt);
+
+	if(dati == NULL) {
+		fprintf(stderr,"Errore nella lettura del file!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	printf("Caricati in memoria %d record.\n",*num_record);
+
+	//chiusura file
+	fclose(fp);
+	return(1);
+}
+
+int f_print(record ***dati_punt, int num_record) {
 	char cmd[MAXL + 1];
 
 	char tabella[o_errore][MAXL_COMANDO] = {"data", "codice", "partenza", "arrivo"};
@@ -201,6 +247,7 @@ int f_print(record *dati_punt[][MAX_RECORD], int num_record) {
 
 	for(int i = 0; i < num_record; i++)
 		printRecord(dati_punt[ord-1][i]);
+	return(1);
 }
 
 int compare(const void *a, const void *b, void *ord) {
@@ -235,9 +282,10 @@ int compare(const void *a, const void *b, void *ord) {
 int sort(record **dati, int num_record, ordinamento ord) {
 	qsort_r(dati, num_record, sizeof(record*), compare, &ord);
 	index_set(dati,num_record);
+	return 0;
 }
 
-int index_set(record **dati, int num_record) {
+void index_set(record **dati, int num_record) {
 	for(int i = 0; i < num_record; i++)
 		dati[i]->index = i;
 }
@@ -264,7 +312,7 @@ void getElement(char *tmp, record *record, int len, ordinamento ord) {
 	tmp[len] = '\0';
 }
 
-int f_ricerca_bin(record *dati_punt[][MAX_RECORD],int num) {
+int f_ricerca_bin(record ***dati_punt,int num) {
 	char tosearch[MAXL + 1], tmp[MAXL+1], cmd[MAXL+1];
 
 	char tabella[o_errore][MAXL_COMANDO] = {"data", "codice", "partenza", "arrivo"};
@@ -329,4 +377,5 @@ int f_ricerca_bin(record *dati_punt[][MAX_RECORD],int num) {
 		else
 			found = 0;	
 	}
+	return 1;
 }
