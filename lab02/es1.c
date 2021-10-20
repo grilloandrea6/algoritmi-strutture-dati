@@ -1,10 +1,28 @@
+/*
+ * Laboratorio 2 Esercizio 1
+ * Autore: Andrea Grillo
+ * Data: Ottobre 2021
+ */
+
+/*
+ * Testa che i valori trovati dalla funzione gcd
+ * secondo l'algoritmo proposto, e dalla funzione
+ * che sfrutta l'algoritmo di euclide siano coincidenti
+ * per ogni combinazione di valori interi ammissibili.
+ */
+
 #include <stdio.h>
+#include <limits.h>
 
 int gcd(int a, int b);
 int gcd_euclide(int a, int b);
 
 void main() {
-	printf("gcd %d %d\n",gcd(30,15),gcd_euclide(30,15));
+	for(int i = 0; i < INT_MAX; i++)
+		for(int j = 0; j < INT_MAX; j++){
+			if(gcd(i,j) != gcd_euclide(i,j)) printf("OPS %d,%d,%d,%d",i,j,gcd_euclide(i,j),gcd(i,j));
+			return;
+		}
 }
 
 int gcd(int a, int b) {

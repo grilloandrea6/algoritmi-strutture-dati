@@ -322,8 +322,8 @@ int f_ricerca_bin(record ***dati_punt,int num) {
 
 	ordinamento ord=o_data;
 
-    	while(ord<o_errore && strcmp(cmd,tabella[ord-1])!=0)
-        	ord++;
+	while(ord<o_errore && strcmp(cmd,tabella[ord-1])!=0)
+    	ord++;
 	
 	if(ord == o_errore){
 		printf("Errore nella lettura del parametro.\n");

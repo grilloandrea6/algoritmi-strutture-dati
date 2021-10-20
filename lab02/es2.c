@@ -1,3 +1,9 @@
+/*
+ * Laboratorio 2 Esercizio 2
+ * Autore: Andrea Grillo
+ * Data: Ottobre 2021
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -53,30 +59,32 @@ int **malloc2dR(char* filename, int *nr, int *nc) {
 	int **matrice;
 
 	// apertura file
-    	if(!openFile(&fp,filename)) {
-        	fprintf(stderr,"Errore nell'apertura del file!\n");
-        	exit(EXIT_FAILURE);
-    	}
+	if(!openFile(&fp,filename)) {
+    	fprintf(stderr,"Errore nell'apertura del file!\n");
+    	exit(EXIT_FAILURE);
+	}
+
 	if(fscanf(fp,"%d %d ",nr,nc) != 2) {
 		fprintf(stderr,"Errore lettura file!\n");
-        	exit(EXIT_FAILURE);
-    	}
+       	exit(EXIT_FAILURE);
+    }
 
-
+    // allocazione memoria
 	matrice = (int **) malloc(*nr * sizeof(int *));
 
 	if(matrice == NULL) {
 		fprintf(stderr,"Errore allocazione!\n");
-        	exit(EXIT_FAILURE);
-    	}
+    	exit(EXIT_FAILURE);
+	}
 
 	for(int i = 0; i < *nr; i++) {
+		// allocazione memoria
 		matrice[i] = (int *) malloc((*nc) * sizeof(int));
 
 		if(matrice[i] == NULL) {
 			fprintf(stderr,"Errore allocazione!\n");
         		exit(EXIT_FAILURE);
-    		}
+    	}
 		for(int j = 0; j < *nc; j++) //matrice[i][j] = j;
 			fscanf(fp,"%d ",&matrice[i][j]);
 	}
