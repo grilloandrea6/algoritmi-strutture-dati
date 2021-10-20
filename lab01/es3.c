@@ -4,6 +4,23 @@
  * Data: Ottobre 2021
  */
 
+/*
+ * Utilizza per l'ordinamento la funzione qsort della libreria C.
+ * L'esercizio richiede che l'ordinamento sia stabile, ma qsort si basa
+ * sull'algoritmo quicksort che non è stabile.
+ * Per renderlo stabile, nella struttura dati è stato aggiunto un campo index.
+ * Il campo index viene settato dalla funzione index_set, in ordine crescente.
+ * Nella funzione "compare", oltre alle comparazioni in base al tipo di ordinamento,
+ * a parità di chiave, si indica come "minore" quello con indice inferiore.
+ * Dopo ogni ordinamento i valori dell'index vengono aggiornati.
+ */
+
+/*
+ * Per l'ordinamento per data, si è utilizzato un approccio simile a quello del 
+ * RadixSort. I dati vengono ordinati prima per orario, e poi per data con 
+ * ordinamento stabile.
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -114,41 +131,40 @@ int menuParola(record **dati_punt, int num) {
 
     switch (cmd) {
         case c_print:
-		ret = f_print(dati_punt,num);
-            	break;
+			ret = f_print(dati_punt,num);
+            break;
         case c_ord_data:
-		ord = o_ora;
-		sort(dati_punt,num,ord);		
-		ord = o_data;
-		sort(dati_punt,num,ord);
-		ret = f_print(dati_punt,num);
+			ord = o_ora;
+			sort(dati_punt,num,ord);		
+			ord = o_data;
+			sort(dati_punt,num,ord);
+			ret = f_print(dati_punt,num);
             break;
         case c_ord_codice:
-		ord = o_codice;
-		sort(dati_punt,num,ord);
-		ret = f_print(dati_punt,num);
-	    break;
+			ord = o_codice;
+			sort(dati_punt,num,ord);
+			ret = f_print(dati_punt,num);
+	    	break;
         case c_ord_partenza:
-		ord = o_partenza;		
-		sort(dati_punt,num,ord);
-		ret = f_print(dati_punt,num);
+			ord = o_partenza;		
+			sort(dati_punt,num,ord);
+			ret = f_print(dati_punt,num);
             break;
         case c_ord_arrivo:
-		ord = o_arrivo;
-		sort(dati_punt,num,ord);
-		ret = f_print(dati_punt,num);
+			ord = o_arrivo;
+			sort(dati_punt,num,ord);
+			ret = f_print(dati_punt,num);
             break;
-	case c_ricerca_lin:
-		ret = f_ricerca_lin(dati_punt,num);
-	    break;
-	case c_ricerca_bin:
-		ret = f_ricerca_bin(dati_punt,num);
-		break;
+		case c_ricerca_lin:
+			ret = f_ricerca_lin(dati_punt,num);
+	    	break;
+		case c_ricerca_bin:
+			ret = f_ricerca_bin(dati_punt,num);
+			break;
         case c_fine:
             printf("Arrivederci!\n");
             return(0);
             break;
-
         case c_errore:
         default:
             printf("Errore nella lettura del comando.\n");
@@ -183,14 +199,14 @@ int getData(FILE **fp, record *dati) {
 }
 
 void printRecord(record *rec) {
-    printf("%s %s %s %s %s %s %d\n",
-           rec->codice_tratta,
-           rec->partenza,
-           rec->destinazione,
-           rec->data,
-           rec->ora_partenza,
-           rec->ora_arrivo,
-           rec->ritardo);
+	printf("%s\t%-10s\t%s\t%s\t%s\t%s\t%d\n",
+	       rec->codice_tratta,
+	       rec->partenza,
+	       rec->destinazione,
+	       rec->data,
+	       rec->ora_partenza,
+	       rec->ora_arrivo,
+	       rec->ritardo);
 }
 
 int f_print(record **dati, int num_record) {
@@ -247,7 +263,6 @@ int f_ricerca_lin(record **dati_punt,int num) {
 	}
 }
 
-
 int f_ricerca_bin(record **dati_punt,int num) {
 	char partenza[MAXL + 1], tmp[MAXL+1];
 
@@ -259,39 +274,36 @@ int f_ricerca_bin(record **dati_punt,int num) {
 	sort(dati_punt,num,ord);
 
 	int found = 0;
-	int i = num / 2, cmp,n_iterations=0;
+	int medio, cmp;
+	int inizio = 0, fine = num - 1;
+	while(!found && inizio <= fine){
+		medio = (inizio+fine)/2;
 
-	while(!found){
-		strncpy(tmp, dati_punt[i]->partenza, strlen(partenza));
+		strncpy(tmp, dati_punt[medio]->partenza, strlen(partenza));
 		tmp[strlen(partenza)] = '\0';
-		
-		cmp = strcmp(partenza,tmp);
-		if(cmp > 0) {if(i == 3*i/2) i++; else i = 3*i/2;}
-		else if(cmp < 0) {if(i == i/2) i--; else i = i/2;}
-		else found = 1;
-		
-		if(i < 0 || i > num || n_iterations > num) {
-			printf("Non trovato\n");
-			return -1;
-		}
-		n_iterations++;
-	}
-	printRecord(dati_punt[i]);
 
-	// controllo se ce ne sono altri subito prima o dopo di quello trovato
+		cmp = strcmp(tmp,partenza);
+		if(cmp > 0) 		fine = medio - 1;
+		else if(cmp < 0) 	inizio = medio + 1;
+		else found = 1;
+	}
+	printRecord(dati_punt[medio]);
+
+	// controllo se ci sono altri valori corrispondenti
+	// subito prima o dopo di quello trovato
+
 	//dopo
-	for(int j = i+1; found && j < num; j++){
+	for(int j = medio+1; found && j < num; j++){
 		strncpy(tmp,dati_punt[j]->partenza,strlen(partenza));
 		if(strcmp(partenza,tmp) == 0)
 			printRecord(dati_punt[j]);
 		else
-			found = 0;
-			
+			found = 0;	
 	}
 
 	//prima
 	found = 1;
-	for(int j = i-1; found && j >-1; j--){
+	for(int j = medio-1; found && j >= 0; j--){
 		strncpy(tmp,dati_punt[j]->partenza,strlen(partenza));
 		if(strcmp(partenza,tmp) == 0)
 			printRecord(dati_punt[j]);

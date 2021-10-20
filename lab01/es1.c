@@ -33,12 +33,16 @@ char *cercaRegexp(char *src, char *regexp) {
 			else if(regexp[regexCount] == '\\') 
 			{
 				regexCount++;
-				if(regexp[regexCount] == 'A' && !isupper(src[i+srcCount]))		found = 0;
-				else if(regexp[regexCount] == 'a' && !islower(src[i+srcCount]))		found = 0;
-				else { fprintf(stderr,"Errore di formato della regex!"); return NULL; }
+				if(regexp[regexCount] == 'A' && islower(src[i+srcCount]))			found = 0;
+				else if(regexp[regexCount] == 'a' && isupper(src[i+srcCount]))		found = 0;
+				else if(regexp[regexCount] != 'A' && regexp[regexCount] != 'a') 
+				{
+					fprintf(stderr,"Errore di formato della regex!\n"); return NULL;
+				}
 			}
 			
-			else if(regexp[regexCount] == '[') {
+			else if(regexp[regexCount] == '[') 
+			{
 				// [^..]
 				if(regexp[regexCount+1] == '^')
 				{

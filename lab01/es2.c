@@ -1,5 +1,6 @@
 /*
- * Laboratorio 6 Esercizio 1
+ * Laboratorio 1 Esercizio 2
+ * Da laboratorio 6 esercizio 1 TdP
  * Autore: Andrea Grillo
  * Data: Maggio 2021
  */
