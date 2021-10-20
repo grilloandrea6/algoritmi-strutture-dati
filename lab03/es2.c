@@ -1,3 +1,9 @@
+/*
+ * Laboratorio 3 Esercizio 2
+ * Autore: Andrea Grillo
+ * Data: Ottobre 2021
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +50,7 @@ void main() {
 	}
 
 	int *sol = malloc(n*sizeof(int));
-	
+
 	printf("Numero combinazioni: %d.\n",princ_molt(0, val,sol, n, 0,data));
 
 }
