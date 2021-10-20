@@ -141,6 +141,14 @@ int menuParola(record ***dati_punt, int *num, record* dati) {
 			ret = f_ricerca_bin(dati_punt,*num);
 			break;
 		case c_carica_file:
+			for(int i = 0; i < 4; i++)
+				free(dati_punt[i]);
+
+			//	dati = (record *) malloc(numero_record * sizeof(record));
+
+			//record *lala = *dati;
+			free(dati);
+
 			ret = f_carica_file(dati_punt,num,&dati);
 			break;
 		case c_fine:
@@ -198,11 +206,7 @@ int f_carica_file(record ***dati_punt, int *num_record, record** dati) {
 	FILE *fp;
 	char filename[MAXL];
 
-	for(int i = 0; i < 4; i++)
-		free(dati_punt[i]);
-
-	free(dati);
-
+	
 	printf("Inserisci il nome del file da leggere: ");
 	scanf(" %s",filename);
 
@@ -323,7 +327,7 @@ int f_ricerca_bin(record ***dati_punt,int num) {
 	ordinamento ord=o_data;
 
 	while(ord<o_errore && strcmp(cmd,tabella[ord-1])!=0)
-    	ord++;
+		ord++;
 	
 	if(ord == o_errore){
 		printf("Errore nella lettura del parametro.\n");
@@ -336,28 +340,23 @@ int f_ricerca_bin(record ***dati_punt,int num) {
 	if(scanf(" %s",tosearch) != 1) return(-1);
 
 	int found = 0;
-	int i = num / 2, cmp,n_iterations=0;
+    int medio, cmp;
+    int inizio = 0, fine = num - 1;
+    while(!found && inizio <= fine){
+        medio = (inizio+fine)/2;
 
-	while(!found){
-		getElement(tmp, lista[i], strlen(tosearch),ord);
-
-		cmp = strcmp(tosearch,tmp);
-
-		if(cmp > 0) {if(i == 3*i/2 || 3*i/2 == num) i++; else i = 3*i/2;}
-		else if(cmp < 0) {if(i == i/2) i--; else i = i/2;}
-		else found = 1;
-
-		if(i < 0 || i > num || n_iterations > num) {
-			printf("Non trovato\n");
-			return -1;
-		}
-		n_iterations++;
+        getElement(tmp, lista[medio], strlen(tosearch),ord);
+        
+        cmp = strcmp(tmp, tosearch);
+        if(cmp > 0)             fine = medio - 1;
+        else if(cmp < 0)        inizio = medio + 1;
+        else found = 1;
 	}
-	printRecord(lista[i]);
+	printRecord(lista[medio]);
 
 	// controllo se ce ne sono altri subito prima o dopo di quello trovato
 	//dopo
-	for(int j = i+1; found && j < num; j++){
+	for(int j = medio+1; found && j < num; j++){
 		getElement(tmp, lista[j], strlen(tosearch),ord);
 
 		if(strcmp(tosearch,tmp) == 0)
@@ -369,7 +368,7 @@ int f_ricerca_bin(record ***dati_punt,int num) {
 
 	//prima
 	found = 1;
-	for(int j = i-1; found && j >-1; j--){
+	for(int j = medio-1; found && j >-1; j--){
 		getElement(tmp, lista[j], strlen(tosearch),ord);
 
 		if(strcmp(tosearch,tmp) == 0)
