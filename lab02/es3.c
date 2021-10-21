@@ -79,7 +79,6 @@ int main() {
 	for(int i = 0; i < 4; i++)
 		sort(dati_punt[i],numero_record,ord++);
 
-
 	printf("Ciao! Con questo programma puoi filtrare i dati del log.\n");
 	printf("Caricati in memoria %d record.\n",numero_record);
 
@@ -141,14 +140,6 @@ int menuParola(record ***dati_punt, int *num, record* dati) {
 			ret = f_ricerca_bin(dati_punt,*num);
 			break;
 		case c_carica_file:
-			for(int i = 0; i < 4; i++)
-				free(dati_punt[i]);
-
-			//	dati = (record *) malloc(numero_record * sizeof(record));
-
-			//record *lala = *dati;
-			free(dati);
-
 			ret = f_carica_file(dati_punt,num,&dati);
 			break;
 		case c_fine:
@@ -168,35 +159,34 @@ int menuParola(record ***dati_punt, int *num, record* dati) {
 int getData(FILE **fp, record **dati_ret, record ***dati_punt) {
 	int numero_record;
 
-	record *dati = *dati_ret;
-
 	if(fscanf(*fp,"%d\n",&numero_record) != 1)
 		return(-1);
 
-	dati = (record *) malloc(numero_record * sizeof(record));
+	*dati_ret = (record *) malloc(numero_record * sizeof(record));
 
-	if(dati == NULL) {
+	if(*dati_ret == NULL) {
 		printf("Errore allocazione memoria!");
 		exit(EXIT_FAILURE);
 	}
 
 	for(int i = 0; i < numero_record; i++) {
-		dati[i].index = i;
+		(*dati_ret)[i].index = i;
         if(fscanf(*fp,"%s %s %s %s %s %s %d",
-                                dati[i].codice_tratta,
-                                dati[i].partenza,
-                                dati[i].destinazione,
-                                dati[i].data,
-                                dati[i].ora_partenza,
-                                dati[i].ora_arrivo,
-                                &dati[i].ritardo) != 7)    return(-1);
+					(*dati_ret)[i].codice_tratta,
+					(*dati_ret)[i].partenza,        
+					(*dati_ret)[i].destinazione,  
+					(*dati_ret)[i].data,                                
+					(*dati_ret)[i].ora_partenza,     
+					(*dati_ret)[i].ora_arrivo,                               
+					&((*dati_ret)[i].ritardo)) != 7)    
+        	return(-1);
 
 	 	// DEBUG printRecord(&dati[i]);
 	}
 	for(int i = 0; i < 4; i++) {
 		dati_punt[i] = (record **) malloc(numero_record * sizeof(record *));
 		for(int j = 0; j < numero_record; j++)
-			dati_punt[i][j] = &dati[j];
+			dati_punt[i][j] = &((*dati_ret)[j]);
 	}
 
 	return(numero_record);
@@ -206,6 +196,10 @@ int f_carica_file(record ***dati_punt, int *num_record, record** dati) {
 	FILE *fp;
 	char filename[MAXL];
 
+	for(int i = 0; i < 4; i++)
+		free(dati_punt[i]);
+
+	free(*dati);
 	
 	printf("Inserisci il nome del file da leggere: ");
 	scanf(" %s",filename);
