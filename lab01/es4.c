@@ -1,8 +1,29 @@
 /*
- * Laboratorio 1 Esercizio 3
+ * Laboratorio 1 Esercizio 4
  * Autore: Andrea Grillo
  * Data: Ottobre 2021
  */
+
+/*
+ * Utilizza per l'ordinamento la funzione qsort della libreria C.
+ * L'esercizio richiede che l'ordinamento sia stabile, ma qsort si basa
+ * sull'algoritmo quicksort che non è stabile.
+ * Per renderlo stabile, nella struttura dati è stato aggiunto un campo index.
+ * Il campo index viene settato dalla funzione index_set, in ordine crescente.
+ * Nella funzione "compare", oltre alle comparazioni in base al tipo di ordinamento,
+ * a parità di chiave, si indica come "minore" quello con indice inferiore.
+ * Dopo ogni ordinamento i valori dell'index vengono aggiornati.
+ */
+
+/*
+ * Per l'ordinamento per data, si è utilizzato un approccio simile a quello del 
+ * RadixSort. I dati vengono ordinati prima per orario, e poi per data con 
+ * ordinamento stabile.
+ */
+
+// necessario per evitare warning
+// funzione qsort_r
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <ctype.h>

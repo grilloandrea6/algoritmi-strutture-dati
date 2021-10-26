@@ -21,6 +21,10 @@
  * ordinamento stabile.
  */
 
+// necessario per evitare warning
+// funzione qsort_r
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
