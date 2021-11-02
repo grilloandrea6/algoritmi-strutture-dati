@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXL_FILENAME 255
+
+typedef struct {
+	int zaffiri,rubini,topazi,smeraldi;
+} data;
+
+typedef enum {
+        zaffiro,rubino,topazio,smeraldo
+} pietre;
+
+int checkSol(int *sol, int sol_dim);
+
+
+void main() {
+	char filename[MAXL_FILENAME];
+	FILE* fp;
+	int n,i;
+	data *dati;
+
+	printf("Inserisci il nome del file da leggere: ");
+	scanf("%s",filename);
+
+	fp = fopen(filename,"r");
+	if(fp == NULL) {
+		fprintf(stderr,"Impossibile aprire il file.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	fscanf(fp,"%d",&n);
+	
+	dati = (data*) malloc(n*sizeof(data));
+
+	for(i = 0; i < n; i++) {
+		fscanf(fp,"%d%d%d%d",
+			&(dati[i].zaffiri),
+			&(dati[i].rubini),
+			&(dati[i].topazi),
+			&(dati[i].smeraldi));
+
+		printf("Esecuzione algoritmo.\nDati: %d zaffiri, %d rubini, %d topazi e %d smeraldi.\n",
+			dati[i].zaffiri,
+			dati[i].rubini,
+			dati[i].topazi,
+			dati[i].smeraldi);
+
+		int *sol,sol_dim;
+		sol_dim = dati[i].zaffiri + dati[i].rubini + dati[i].topazi + dati[i].smeraldi;
+		sol = (int*) malloc(sol_dim * sizeof(int));
+		printf("%d\n",zaffiro);
+
+
+	}
+	fclose(fp);
+}
+
+
+int checkSol(int *sol, int sol_dim) {
+	// 0 z - 1 r - 2 t - 3 s
+	
+	for(int i = 0; i < sol_dim; i++) {
+		if((sol[i] == zaffiro && !(sol[(i+1)%sol_dim] == zaffiro || sol[(i+1)%sol_dim] == rubino)) ||
+			(sol[i] == smeraldo && !(sol[(i+1)%sol_dim] == smeraldo || sol[(i+1)%sol_dim] == topazio)) ||
+			(sol[i] == rubino && !(sol[(i+1)%sol_dim] == smeraldo || sol[(i+1)%sol_dim] == topazio)) ||
+			(sol[i] == topazio && !(sol[(i+1)%sol_dim] == zaffiro || sol[(i+1)%sol_dim] == rubino)) ) {
+				return 0;
+			}
+	}
+	return 1;
+}
+int recursion(int *sol, int pos, int max_dim, int count, data dati) {
+	pietre p;
+	if(checkSol(sol,pos))
+	{
+		printSol(sol,pos);
+		count++;
+	}
+	if(pos < max_dim) {
+		for(p = zaffiro; p <= topazio; p++) {
+			if(dati)
+		}
+	}
+
+	return count;
+}
