@@ -5,6 +5,11 @@
  * Data: Maggio 2021
  */
 
+/* 
+ * compilato e testato con
+ * gcc (Debian 8.3.0-6) 8.3.0
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
