@@ -9,7 +9,7 @@ typedef enum {
 } pietre;
 
 int checkSol(int *sol, int sol_dim);
-int recursion(int *sol, int pos, int max_dim, int count, int dati[],int);
+int recursion(int *sol, int pos, int max_dim, int count, int dati[]);
 
 void main() {
 	char filename[MAXL_FILENAME];
@@ -53,7 +53,7 @@ void main() {
 
 
 		//recursion
-		printf("Collana massima di lunghezza %d\n",recursion(sol,0, sol_dim, 0, dati,0));
+		printf("Collana massima di lunghezza %d\n",recursion(sol,0, sol_dim, 0, dati));
 
 		// freeing solution
 		free(sol);
@@ -76,15 +76,18 @@ int checkSol(int *sol, int sol_dim) {
 
 
 
-int recursion(int *sol, int pos, int max_dim, int max_found, int dati[], int prova) {
-	if(pos + 1 > max_found && checkSol(sol,pos)) max_found = pos + 1;
+int recursion(int *sol, int pos, int max_dim, int max_found, int dati[]) {
+	if(pos > max_found) {//} && checkSol(sol,pos)) {
+		max_found = pos;
+		if(max_found == max_dim + 1) return max_found;
+	}
 
 	if(pos == 0) {
 		for(pietre p = zaffiro; p <= smeraldo; p++) {
 			if(dati[p] > 0) {
 				sol[pos] = p;
 				dati[p]--;
-				max_found = recursion(sol,pos + 1, max_dim, max_found, dati, prova + 1);
+				max_found = recursion(sol,pos + 1, max_dim, max_found, dati);
 				dati[p]++;
 			}
 		}
@@ -97,14 +100,14 @@ int recursion(int *sol, int pos, int max_dim, int max_found, int dati[], int pro
 				if(dati[smeraldo] > 0) {
 					sol[pos] = smeraldo;
 					dati[smeraldo]--;
-					max_found = recursion(sol,pos + 1, max_dim, max_found, dati, prova + 1);
+					max_found = recursion(sol,pos + 1, max_dim, max_found, dati);
 					dati[smeraldo]++;
 				}
 
 				if(dati[topazio] > 0) {
 					sol[pos] = topazio;
 					dati[topazio]--;
-					max_found = recursion(sol,pos + 1, max_dim, max_found, dati, prova + 1);
+					max_found = recursion(sol,pos + 1, max_dim, max_found, dati);
 					dati[topazio]++;
 				}
 				break;
@@ -114,14 +117,14 @@ int recursion(int *sol, int pos, int max_dim, int max_found, int dati[], int pro
 				if(dati[zaffiro] > 0) {
 					sol[pos] = zaffiro;
 					dati[zaffiro]--;
-					max_found = recursion(sol,pos + 1, max_dim, max_found, dati, prova + 1);
+					max_found = recursion(sol,pos + 1, max_dim, max_found, dati);
 					dati[zaffiro]++;
 				}
 
 				if(dati[rubino] > 0) {
 					sol[pos] = rubino;
 					dati[rubino]--;
-					max_found = recursion(sol,pos + 1, max_dim, max_found, dati, prova + 1);
+					max_found = recursion(sol,pos + 1, max_dim, max_found, dati);
 					dati[rubino]++;
 				}
 				break;
