@@ -38,160 +38,30 @@ typedef enum {
 
 comandi leggiComando ();
 void convertData(char * data, char *converted);
-int item_cmp(Item a, Item b);
-int item_print(Item item, FILE *fp);
+int itemCmp(Item a, Item b);
+int itemPrint(Item item, FILE *fp);
 link newNode(Item val, link next);
 int scanNode(FILE *fp, Item *item);
-link getData(link h,FILE* fp);
+link getData(link h,char *filename);
 link SortListIns(link h, Item val);
 Item listExtrHeadP(link *hp);
-link sort(link h);
+int estraiData(link *h,Item start,Item end);
 
-
-link f_nuovo(link head){
-	Item item;
-	printf("Inserisci i dati del nuovo record: ");
-	if(!scanNode(stdin,&item)) {
-		printf("Errore nella lettura del record!\n");
-		return head;
-	}
-	return SortListIns(head,item); 
-}
-
-link f_leggi(link head) {
-	char nomefile[MAXL_FILENAME];
-	FILE *fp;
-	printf("Inserisci il nome del file da leggere: ");
-	scanf("%s",nomefile);
-	fp = fopen(nomefile,"r");
-	head = getData(head,fp);
-	fclose(fp);
-	return head;
-}
-
-void f_ricerca(link head) {
-	link t;
-	char codice[L_CODICE];
-	int found = 0;
-
-	printf("Inserisci codice da ricercare: ");
-	scanf("%s",codice);
-
-	
-	if(head == NULL) {
-		printf("Non ci sono dati in memoria!\n");
-		return;
-	}
-
-	for(t = head; t != NULL; t = t->next)
-		if(strcmp(codice, t->val.codice) == 0) {
-			found = 1;
-			item_print(t->val,stdout);
-		}
-
-	if(!found) printf("Codice non trovato in memoria!\n");
-}
-
-
-link f_cancellacodice(link h) {
-	char codice[L_CODICE];
-	int found = 0;
-	printf("Inserisci codice da eliminare: ");
-	scanf("%s",codice);
-
-	link x, p;
-	if(h == NULL) {
-		printf("Non ci sono dati in memoria!\n");
-		return h;
-	}
-
-	for (x=h, p=NULL; x!=NULL; p=x, x=x->next) {
-		if(strcmp(x->val.codice,codice) == 0) {
-			found = 1;
-			if(x==h)
-				h = x->next;
-			else
-				p->next = x->next;
-			item_print(x->val,stdout);
-			free(x);
-			break;
-		}
-	}
-	if(!found) printf("Codice non trovato in memoria!\n");
-	return h;
-}
-
-
-
-void f_stampa(link head) {
-	char filename[MAXL_FILENAME];
-	link t;
-	FILE *fp;
-	//int stdout = 0;
-	printf("Inserisci il nome del file su cui stampare i dati (scrivi 'video' per stampare a video): ");
-	scanf("%s",filename);
-	if(strcmp(filename,"video") == 0)
-		fp = stdout;
-	else
-		fp = fopen(filename,"w");
-
-	if(fp == NULL) {
-		printf("Errore nell'apertura del file.");
-		return;
-	}
-	for(t = head; t != NULL; t = t->next)
-		item_print(t->val,fp);
-	
-	if(fp != stdout) fclose(fp);
-}
-
-int estraiData(link *h,Item start,Item end) {
-	link x, p;
-
-	for (x=*h, p=NULL; x!=NULL; p=x, x=x->next) {
-		if(item_cmp(x->val,start) >= 0 && item_cmp(x->val,end) <= 0) {
-			if(x==*h)
-				*h = x->next;
-			else
-				p->next = x->next;
-			item_print(x->val,stdout);
-			free(x);
-			return 1;
-		}
-	}
-	return 0;
-}
-
-
-
-link f_cancelladate(link h) {
-	int found = 0;
-	Item start,end;
-	printf("Inserisci data iniziale: ");
-	scanf("%s",start.data);
-	printf("Inserisci data finale: ");
-	scanf("%s",end.data);
-
-	if(h == NULL) {
-		printf("Non ci sono dati in memoria!\n");
-		return h;
-	}
-
-	while(estraiData(&h,start,end)) found = 1;	
-
-	if(!found) printf("Non ci sono record in memoria tra quelle date!\n");
-	return h;
-}
-
+link f_nuovo(link head);
+link f_leggi(link head);
+void f_ricerca(link head);
+link f_cancellacodice(link h);
+void f_stampa(link head);
+link f_cancelladate(link h);
 
 
 void main() {
 	link head = NULL;
 
 	link t;
-	int exit = 1;
+	int exit = 0;
 	comandi cmd;
-	while(exit) {
+	while(!exit) {
 		cmd = leggiComando();
 
 		switch (cmd) {
@@ -217,7 +87,7 @@ void main() {
 
 			case c_fine:
 				printf("Arrivederci!\n");
-				exit = 0;
+				exit = 1;
 				break;
 
 			case c_errore:
@@ -227,7 +97,6 @@ void main() {
 		}
 	}
 }
-
 
 comandi leggiComando () {
 	comandi c;
@@ -242,6 +111,120 @@ comandi leggiComando () {
 		c++;
 
 	return(c);
+}
+
+link f_nuovo(link head){
+	Item item;
+	printf("Inserisci i dati del nuovo record: ");
+	if(!scanNode(stdin,&item)) {
+		printf("Errore nella lettura del record!\n");
+		return head;
+	}
+	return SortListIns(head,item); 
+}
+
+link f_leggi(link head) {
+	char nomefile[MAXL_FILENAME];
+	FILE *fp;
+	printf("Inserisci il nome del file da leggere: ");
+	scanf("%s",nomefile);
+	
+	head = getData(head,nomefile);
+	
+	return head;
+}
+
+void f_ricerca(link head) {
+	link t;
+	char codice[L_CODICE];
+	int found = 0;
+
+	printf("Inserisci codice da ricercare: ");
+	scanf("%s",codice);
+
+	
+	if(head == NULL) {
+		printf("Non ci sono dati in memoria!\n");
+		return;
+	}
+
+	for(t = head; t != NULL; t = t->next)
+		if(strcmp(codice, t->val.codice) == 0) {
+			found = 1;
+			itemPrint(t->val,stdout);
+		}
+
+	if(!found) printf("Codice non trovato in memoria!\n");
+}
+
+link f_cancellacodice(link h) {
+	char codice[L_CODICE];
+	int found = 0;
+	printf("Inserisci codice da eliminare: ");
+	scanf("%s",codice);
+
+	link x, p;
+	if(h == NULL) {
+		printf("Non ci sono dati in memoria!\n");
+		return h;
+	}
+
+	for (x=h, p=NULL; x!=NULL; p=x, x=x->next) {
+		if(strcmp(x->val.codice,codice) == 0) {
+			found = 1;
+			if(x==h)
+				h = x->next;
+			else
+				p->next = x->next;
+			itemPrint(x->val,stdout);
+			free(x);
+			break;
+		}
+	}
+	if(!found) printf("Codice non trovato in memoria!\n");
+	return h;
+}
+
+void f_stampa(link head) {
+	char filename[MAXL_FILENAME];
+	link t;
+	FILE *fp;
+
+	printf("Inserisci il nome del file su cui stampare i dati (scrivi 'video' per stampare a video): ");
+	scanf("%s",filename);
+	if(strcmp(filename,"video") == 0)
+		fp = stdout;
+	else
+		fp = fopen(filename,"w");
+
+	if(fp == NULL) {
+		printf("Errore nell'apertura del file.");
+		return;
+	}
+
+	for(t = head; t != NULL; t = t->next)
+		itemPrint(t->val,fp);
+	
+	if(fp != stdout) fclose(fp);
+}
+
+link f_cancelladate(link h) {
+	int found = 0;
+	Item start,end;
+	printf("Inserisci data iniziale: ");
+	scanf("%s",start.data);
+	printf("Inserisci data finale: ");
+	scanf("%s",end.data);
+
+	if(h == NULL) {
+		printf("Non ci sono dati in memoria!\n");
+		return h;
+	}
+
+	while(estraiData(&h,start,end)) found = 1;	
+
+	if(!found) printf("Non ci sono record in memoria tra quelle date!\n");
+	return h;
 }
 
 void convertData(char * data, char *converted) {
@@ -260,18 +243,15 @@ void convertData(char * data, char *converted) {
 	converted[8] = '\0';
 }
 
-int item_cmp(Item a, Item b) {
+int itemCmp(Item a, Item b) {
 	char a_data[L_DATA], b_data[L_DATA];
 	convertData(a.data, a_data);
 	convertData(b.data, b_data);
-	//sprintf(a_data,"%s%s%s",a.anno,a.mese,a.giorno);
-	//sprintf(b_data,"%s%s%s",b.anno,b.mese,b.giorno);
-	//printf("comparing '%s' and '%s', result:%d\n",a.data,b.data,strcmp(a_data,b_data));
+	
 	return(strcmp(a_data,b_data));
-
 }
 
-int item_print(Item item, FILE* fd) {
+int itemPrint(Item item, FILE* fd) {
 	fprintf(fd, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", 
 			item.codice,
 			item.nome,
@@ -288,7 +268,7 @@ link newNode(Item val, link next) {
 		return NULL;
 	else {
 		x->val = val;
-		x->next= next;
+		x->next = next;
 	}
 	return x;
 }
@@ -306,30 +286,35 @@ int scanNode(FILE *fp, Item *item) {
 	return 0;
 }
 
-link getData(link head,FILE *fp) {	
+link getData(link head, char *filename) {	
 	Item item;
 
+	FILE *fp = fopen(filename,"r");
+	if(fp == NULL) {
+		fprintf(stderr,"errore apertura file.\n");
+		exit(-1);
+	}	
+
 	while(scanNode(fp,&item) && !feof(fp)) {
-		item_print(item,stdout);
+		itemPrint(item,stdout);
 		head = SortListIns(head,item);
 	}
+
+	fclose(fp);
+
 	return head;
 }
 
-
 link SortListIns(link h, Item val) {
 	link x, p;
-//printf("INSERTION\n");
-		//printf("comparing '%s' and '%s', get %d\n",h->val.data,val.data,item_cmp(h->val,val));
-	if(h==NULL|| item_cmp(h->val,val) > 0) {
-		//printf("inserting at the beginning\n");
+
+	if(h==NULL || itemCmp(h->val,val) > 0) {
 		return newNode(val, h);
 	}
 
-	for (x=h->next, p=h; x!=NULL && item_cmp(val,x->val) > 0; p=x, x=x->next);
-	// printf("comparing '%s' and '%s', get %d\n",x->val.data,val.data,item_cmp(val,x->val));
+	for (x=h->next, p=h; x!=NULL && itemCmp(val,x->val) > 0; p=x, x=x->next);
 
-	p->next= newNode(val, x);
+	p->next = newNode(val, x);
 	return h;
 }
 
@@ -340,17 +325,24 @@ Item listExtrHeadP(link *hp) {
 		return tmp;
 	tmp= t->val;
 	*hp= t->next;
+
 	free(t);
 	return tmp;
 }
+	
+int estraiData(link *h,Item start,Item end) {
+	link x, p;
 
-link sort(link h) {
-	link y = h, r = NULL;
-	Item tmp;
-	while(y != NULL) 
-	{
-		tmp = listExtrHeadP(&y);
-		r = SortListIns(r, tmp);
+	for (x=*h, p=NULL; x!=NULL; p=x, x=x->next) {
+		if(itemCmp(x->val,start) >= 0 && itemCmp(x->val,end) <= 0) {
+			if(x==*h)
+				*h = x->next;
+			else
+				p->next = x->next;
+			itemPrint(x->val,stdout);
+			free(x);
+			return 1;
+		}
 	}
-	return r;
+	return 0;
 }

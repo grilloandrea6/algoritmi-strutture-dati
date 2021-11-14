@@ -16,6 +16,7 @@ tabPg_t *allocaTabellaPersonaggi() {
 	tabella->head = NULL;
 	tabella->tail = NULL;
 	tabella->nPg = 0;
+	return tabella;
 }
 
 void acquisisciPersonaggiFile(char *filename, tabPg_t *tabella) {
@@ -101,7 +102,6 @@ void eliminaPersonaggio(tabPg_t *tabella) {
 void stampaEquipaggiamento(tabPg_t *tabella) {
 	char str[MAXL];
 	nodoPg_t *nodo;
-	int i;
 
 	printf("Inserisci il codice del personaggio di cui stampare gli oggetti: ");
 	scanf("%s",str);
@@ -184,7 +184,7 @@ void rimuoviOggetto(tabPg_t *tabella) {
 	}
 
 	// shifting degli altri elementi
-	for(i; i < nodo->val.equip.inUso; i++)
+	for(; i < nodo->val.equip.inUso; i++)
 		nodo->val.equip.vettEq[i-1] = nodo->val.equip.vettEq[i];
 
 	nodo->val.equip.inUso--;
@@ -193,7 +193,6 @@ void rimuoviOggetto(tabPg_t *tabella) {
 void stampaStatistiche(tabPg_t *tabella) {
 	char str[MAXL];
 	nodoPg_t *nodo;
-	int i;
 
 	printf("Inserisci il codice del personaggio di cui calcolare le statistiche: ");
 	scanf("%s",str);

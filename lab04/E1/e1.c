@@ -5,27 +5,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #define FILENAME "grafo.txt"
 
+int powerset(int pos, int *sol, int n, int start, int count, int n_archi, int **matrice);
+int isSolution(int *sol, int N,int **matrice_incidenza,int n_archi);
 void getData(int ***matrice_incidenza, int *n_vertici, int *n_archi);
 void freeMatrice(int **mat, int N);
 
-int isSolution(int *sol, int N,int **matrice_incidenza,int n_archi){
-	int i, j,
-		*archi = calloc(n_archi,sizeof(int));
+int main(){
+	int **matrice_incidenza, *sol, *used, n_archi, n_vertici;
 
-	for(i = 0; i < N; i++) {
-		for(j = 0; j < n_archi;j++)
-			if(matrice_incidenza[j][sol[i]] == 1)
-				archi[j] = 1;
-	}
+	getData(&matrice_incidenza,&n_vertici,&n_archi);
 
-	for(i = 0; i < n_archi; i++)
-		if(archi[i] == 0)
-			return 0;
+	sol = (int*) malloc(n_vertici*sizeof(int));
+	used = (int*) malloc(n_archi*sizeof(int));
 
-	return 1;
+	powerset(0, sol, n_vertici, 0, 0,n_archi,matrice_incidenza);
+
+	freeMatrice(matrice_incidenza,n_archi);
 }
 
 int powerset(int pos, int *sol, int n, int start, int count, int n_archi, int **matrice) {
@@ -49,31 +46,22 @@ int powerset(int pos, int *sol, int n, int start, int count, int n_archi, int **
 	return count;
 }
 
+int isSolution(int *sol, int N,int **matrice_incidenza,int n_archi){
+	int i, j,
+		*archi = calloc(n_archi,sizeof(int));
 
-int main(){
-	int **matrice_incidenza, *sol, *used, n_archi, n_vertici;
-
-	getData(&matrice_incidenza,&n_vertici,&n_archi);
-	
-	/* 
-	DEBUG - stampa matrice
-	for(int i = 0; i < n_archi; i++) {
-		for(int j = 0; j < n_vertici; j++)
-			printf("%d ",matrice_incidenza[i][j]);
-		printf("\n");
+	for(i = 0; i < N; i++) {
+		for(j = 0; j < n_archi;j++)
+			if(matrice_incidenza[j][sol[i]] == 1)
+				archi[j] = 1;
 	}
 
-	printf("\n\n");
-	*/
+	for(i = 0; i < n_archi; i++)
+		if(archi[i] == 0)
+			return 0;
 
-	sol = (int*) malloc(n_vertici*sizeof(int));
-	used = (int*) malloc(n_archi*sizeof(int));
-
-	powerset(0, sol, n_vertici, 0, 0,n_archi,matrice_incidenza);
-
-	freeMatrice(matrice_incidenza,n_archi);
+	return 1;
 }
-
 
 void getData(int ***matrice_incidenza, int *n_vertici, int *n_archi) {
 	int i,a,b;
@@ -82,6 +70,7 @@ void getData(int ***matrice_incidenza, int *n_vertici, int *n_archi) {
 	fscanf(fp,"%d%d",n_vertici,n_archi);
 
 	*matrice_incidenza = (int **) malloc(*n_archi * sizeof(int *));
+
 	for(i = 0; i < *n_archi; i++) {
 		(*matrice_incidenza)[i] = (int *) malloc(*n_vertici * sizeof(int));
 	
@@ -91,36 +80,9 @@ void getData(int ***matrice_incidenza, int *n_vertici, int *n_archi) {
 	}
 }
 
-
 void freeMatrice(int **mat,int N) {
 	for(int i = 0; i < N; i++) {
 		free(mat[i]);
 	}
 	free(mat);
 }
-
-
-
-/*int recursion(int *sol, int pos, int *used, int **matrice, int n_archi, int n_vertici,int cnt) {
-	int i;
-	if(isSolution(sol,pos,matrice,n_vertici,n_archi)) {
-		for(i = 0; i < pos; i++)
-			printf("%d ",sol[i]);
-		printf("\n");
-		return cnt+1;
-	}
-	if(pos > n_vertici) return cnt;
-
-	for(i = pos; i < n_vertici; i++) {
-		if(!used[i]) {
-			used[i] = 1;
-			sol[pos] = i;
-			cnt = recursion(sol,pos+1,used,matrice,n_archi,n_vertici,cnt);
-			used[i] = 0;	
-		}
-			//cnt = recursion(sol,pos,used,matrice,n_archi,n_vertici,cnt);
-
-
-	}
-}
-*/

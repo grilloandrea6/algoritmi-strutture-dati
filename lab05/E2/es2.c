@@ -38,6 +38,9 @@ int main() {
 	printCampo(sol,tessere,nr,nc);
 	printf("\n");
 
+	free(tessere);
+	free(campo);
+	free(sol);
 
 	return 0;
 }
@@ -161,6 +164,9 @@ tessera_t* getTessere(char *filename, int *n_tessere) {
 	for(i = 0; i < *n_tessere; i++) {
 		fscanf(fp,"%c %d %c %d\n",&(ret[i].col1),&(ret[i].val1),&(ret[i].col2),&(ret[i].val2));
 	}
+
+	fclose(fp);
+
 	return ret;
 }
 
@@ -183,8 +189,9 @@ cella_t* getCampo(char *filename, int *nr, int *nc) {
 			fscanf(fp, "%d/%d",&(campo[i].tess),&(campo[i].rot));
 	}
 
-	return campo;
+	fclose(fp);
 
+	return campo;
 }
 
 void printCampo(cella_t *campo, tessera_t *tessere, int nr, int nc) {
