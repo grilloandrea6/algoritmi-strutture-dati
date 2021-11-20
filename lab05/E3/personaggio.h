@@ -6,7 +6,7 @@
 #include "debug.h"
 
 #define MAXL		255
-#define MAX_OGGETTI	100
+#define MAX_OGGETTI	8
 
 typedef struct {
 	int inUso;
