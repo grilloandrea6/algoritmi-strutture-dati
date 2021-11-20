@@ -5,9 +5,9 @@
 #include "pgList.h"
 #include "invArray.h"
 #include "pg.h"
+#include "debug.h"
 
 #define N_SCELTE 7
-#define DBG 0
 
 enum { falso, vero };
 typedef int bool;
@@ -43,17 +43,19 @@ int main(int argc, char **argv) {
   fin = fopen("pg.txt","r");
   pgList_read(fin, pgList);
   fclose(fin);
-#if DBG
-  pgList_print(stdout, pgList);
-#endif /* DBG */
+
+#ifdef DEBUGGING
+  // TODO check se ci sono problemi passando invArray vuoto
+  //  - non sembra, i personaggi non possono avere alcun equipaggiamento
+  pgList_print(stdout, pgList, invArray); 
+#endif /* DEBUGGING */
 
   fin = fopen("inventario.txt","r");
   invArray_read(fin, invArray);
   fclose(fin);
-#if DBG
+#ifdef DEBUGGING
   invArray_print(stdout, invArray);
-#endif /* DBG */
-
+#endif /* DEBUGGING */
   fineProgramma = falso;
 
   do {
