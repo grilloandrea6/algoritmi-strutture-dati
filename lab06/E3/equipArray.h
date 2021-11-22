@@ -29,5 +29,7 @@ int equipArray_getEquipByIndex(equipArray_t equipArray, int index);
 
 /* Si possono aggiungere altre funzioni se ritenute necessarie */
 
+/* ritorno la statistica dell'ultimo oggetto dell'equipaggiamento */
+stat_t equipArray_getLastStat(equipArray_t equip, invArray_t invArray);
 
 #endif

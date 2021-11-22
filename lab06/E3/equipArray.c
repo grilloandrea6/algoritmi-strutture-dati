@@ -73,3 +73,10 @@ int equipArray_getEquipByIndex(equipArray_t equipArray, int index) {
 	}
 	return(equipArray->array[index]);
 }
+
+
+/* ritorno la statistica dell'ultimo oggetto dell'equipaggiamento */
+stat_t equipArray_getLastStat(equipArray_t equip, invArray_t invArray) {
+	printf("getLastStat returning index %d %d\n\n",equip->n, equip->array[equip->n]);
+	return invArray_getByIndex(invArray,equip->array[equip->n - 1])->stat;
+}

@@ -11,6 +11,8 @@ int pg_read(FILE *fp, pg_t *pers) {
 
 	stat_read(fp,&(pers->b_stat));
 	
+	pers->eq_stat = pers->b_stat;
+
 	// se non ho letto non alloco - memory leakage subdolo!
 	if(ret == 3) {
 		pers->equip = equipArray_init();
@@ -30,7 +32,7 @@ void pg_print(FILE *fp, pg_t *pgp, invArray_t invArray) {
 		pgp->nome,
 		pgp->classe); 
 
-	stat_print(fp,&(pgp->b_stat),/*TODO soglia?*/0);
+	stat_print(fp,&(pgp->eq_stat),1);
 
 	equipArray_print(fp,pgp->equip,invArray);
 }
@@ -39,4 +41,18 @@ void pg_print(FILE *fp, pg_t *pgp, invArray_t invArray) {
 di fatto e' sufficiente chiamare l'opportuna funzione dal modulo equipArray */
 void pg_updateEquip(pg_t *pgp, invArray_t invArray) {
 	equipArray_update(pgp->equip,invArray);
+	pg_updateStat(pgp,invArray);
+}
+
+
+/* somma alle statistiche del personaggio le statistiche dell'ultimo oggetto nell'equipaggiamento */
+void pg_updateStat(pg_t *pgp, invArray_t invArray) {
+	stat_t stat = equipArray_getLastStat(pgp->equip,invArray);
+
+	pgp->eq_stat.hp += stat.hp;
+	pgp->eq_stat.mp += stat.mp;
+	pgp->eq_stat.atk += stat.atk;
+	pgp->eq_stat.def += stat.def;
+	pgp->eq_stat.mag += stat.mag;
+	pgp->eq_stat.spr += stat.spr;
 }

@@ -8,10 +8,11 @@ typedef struct {
 	int s,f;
 } att;
 
-void attSel(int N, att *v);
-int recursion(att* att, int *sol, int pos, int max_sol,int max_found,int*,int*, int *mark);
-int checkCompatible(att *vet, int *sol, int N, int to_check);
-int getTime(att *vet, int *sol, int N);
+
+int compatible(att a, att b);
+void attSel(int n, att *val);
+int getDuration(att att);
+int displaySol(att *val, int *opt, int n);
 
 void main() {
 	char filename[MAXL_FILE];
@@ -19,9 +20,9 @@ void main() {
 	FILE *fp;
 	int n_attivita,i;
 
-	//printf("Inserisci il nome del file da leggere: ");
-	//scanf("%s",filename);
-	strcpy(filename,"att1.txt");
+	printf("Inserisci il nome del file da leggere: ");
+	scanf("%s",filename);
+	//strcpy(filename,"att1.txt");
 
 	fp = fopen(filename,"r");
 
@@ -32,10 +33,13 @@ void main() {
 
 	fscanf(fp,"%d",&n_attivita);
 
-	attivita = (att *) malloc(n_attivita*sizeof(att));
+	attivita = (att *) malloc((1+n_attivita)*sizeof(att));
+
+	attivita[0].s=0;
+	attivita[0].f=0;
 
 	printf("Data:\n");
-	for(i = 0; i < n_attivita; i++) {
+	for(i = 1; i <= n_attivita; i++) {
 		fscanf(fp,"%d%d",&(attivita[i].s),&(attivita[i].f));
 		printf("%d %d\n",(attivita[i].s),(attivita[i].f));
 	}
@@ -43,73 +47,78 @@ void main() {
 
 	fclose(fp);
 
-	attSel(n_attivita,attivita);
+	// TODO sorting data
+
+	attSel(n_attivita, attivita);
 
 	free(attivita);
 }
 
+void attSel(int n, att *val) {
+	int i,j,
+		max = 0,max_index,
+		*opt = calloc(n+1,sizeof(int));
 
-void attSel(int N, att *v){
-	int *mark,*sol,*max_sol,i,max_found,max_sol_dim;
-	
-	mark = malloc(N * sizeof(int));
-	sol = malloc(N * sizeof(int));
-	max_sol = malloc(N * sizeof(int));
+	opt[1] = getDuration(val[1]);
 
-	for( i = 0; i < N; i++) mark[i] = 1;
-	
-	max_found = recursion(v,sol,0,N,0,max_sol,&max_sol_dim,mark);
-	
-	printf("Max time: %d\nSolution: ",max_found);
+	for(i = 2; i <= n; i++) {
+		for(j = i - 1; j >= 0; j--) {
+			if(compatible(val[i], val[j])) {
+				if(opt[j] + getDuration(val[i]) > opt[i]) opt[i] = opt[j] + getDuration(val[i]);
+			}
+		}
+	}
 
-	for(i = 0; i < max_sol_dim; i++)
-		printf("(%d,%d) ", v[max_sol[i]].s,v[max_sol[i]].f);
+	for(i = 1; i <= n; i++) {
+		if(opt[i] > max) {
+			max = opt[i];
+			max_index = i;	
+		} 
+	}
+
+
+	printf("Max time: %d\n",max);
+
+	displaySol(val,opt,max_index);
+
+	exit(0);
+}
+
+int displaySol(att *val, int *opt, int n) {
+	int j,i = n;
+	int *sol = calloc(n+1,sizeof(int));
+
+	sol[n] = 1;
+	while(i>0) {
+		for(j = i - 1; j >= 0; j--) {
+			if(opt[i] == opt[j] + getDuration(val[i]) && compatible(val[i],val[j])) {
+				sol[j] = 1;
+				i = j;
+				break;
+
+			}
+		}
+	}
+
+	printf("Solution: ");
+	for(i = 1; i <= n; i++) {
+		if(sol[i]) printf("(%d,%d) ", val[i].s,val[i].f);
+	}
 	printf("\n");
-
-	free(mark);
-	free(sol);
-	free(max_sol);
 }
 
-int recursion(att* att, int *sol, int pos, int N,int max_found, int *max_sol,int *max_sol_dim, int *mark){
-	int adding=0,i;
-	for(i = 0; i < N; i++) {
-		if(mark[i] && checkCompatible(att,sol,pos,i))
-		{	
-			adding = 1;
-			mark[i]--;
-			sol[pos] = i;
-			max_found = recursion(att,sol,pos + 1, N,max_found,max_sol,max_sol_dim,mark);
-			mark[i]++;
-		}
-	}
-	if(!adding) {
-		int tempo = getTime(att,sol,pos);
-		if(tempo > max_found) {
-			max_found = tempo;
-			*max_sol_dim = pos;
-			for(i = 0; i < pos; i++)
-				max_sol[i] = sol[i];
-		}
-	}
-	return max_found;
-
+int getDuration(att att) {
+	return att.f - att.s;
 }
 
-int checkCompatible(att *vet, int *sol, int N, int to_check) {
-	int i;
-	for(i = 0; i < N; i++) {
-		if (vet[sol[i]].s < vet[to_check].f && vet[to_check].s < vet[sol[i]].f)
+int max(int a, int b) {
+	if(a>b) return a;
+	return b;
+}
+
+int compatible(att a, att b) {
+	if ((a.s < b.f && b.s < a.f))
 			return 0;
-	}
+
 	return 1;
-}
-
-
-int getTime(att *vet, int *sol, int N) {
-	int ret = 0;
-	for(int i = 0; i - N; i++) {
-		ret += vet[sol[i]].f - vet[sol[i]].s;
-	}
-	return ret;
 }

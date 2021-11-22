@@ -31,4 +31,7 @@ void pg_updateEquip(pg_t *pgp, invArray_t invArray);
 
 /* Si possono aggiungere altre funzioni se ritenute necessarie */
 
+/* somma alle statistiche del personaggio le statistiche dell'ultimo oggetto nell'equipaggiamento */
+void pg_updateStat(pg_t *pgp, invArray_t invArray);
+
 #endif
