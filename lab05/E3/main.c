@@ -51,7 +51,6 @@ int main() {
 #endif
 	while (menuParola(tabella_personaggi,tabella_inventario));
 
-	// TODO free
 	freeTabella(tabella_personaggi);
 
 	return 0;
