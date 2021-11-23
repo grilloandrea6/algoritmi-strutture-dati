@@ -45,8 +45,7 @@ int main(int argc, char **argv) {
   fclose(fin);
 
 #ifdef DEBUGGING
-  // TODO check se ci sono problemi passando invArray vuoto
-  //  - non sembra, i personaggi non possono avere alcun equipaggiamento
+  //  invArray è vuoto ma non è un problema, i personaggi non possono avere alcun equipaggiamento
   pgList_print(stdout, pgList, invArray); 
 #endif /* DEBUGGING */
 
@@ -63,6 +62,7 @@ int main(int argc, char **argv) {
     switch(selezione){
 
     case 0: {
+      invArray_free(invArray);
       fineProgramma = vero;
     } break;
 
