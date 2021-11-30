@@ -18,7 +18,7 @@ int fS(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati);
 void main() {
 	char filename[MAXL_FILENAME];
 	FILE* fp;
-	int i,j,k,l,n,n_prove,lenmax,tmp,dati[4],datiBck[4],
+	int i,j,k,l,n,n_prove,lenmax,tmp,dati[4],
 		****memoizationZ,
 		****memoizationR,
 		****memoizationT,
@@ -87,23 +87,17 @@ void main() {
 			}
 		}
 
-
-		memcpy(datiBck,dati,4*sizeof(int));
-		tmp = fZ(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = lenmax > tmp ? lenmax : tmp;
+		lenmax = fZ(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
 		
-		memcpy(dati,datiBck,4*sizeof(int));
 		tmp = fR(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = lenmax > tmp ? lenmax : tmp;
+		lenmax = MAX(lenmax, tmp);
 
-		memcpy(dati,datiBck,4*sizeof(int));
 		tmp = fT(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = lenmax > tmp ? lenmax : tmp;
-		
-		memcpy(dati,datiBck,4*sizeof(int));
+		lenmax = MAX(lenmax, tmp);
+
 		tmp = fS(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = lenmax > tmp ? lenmax : tmp;
-		
+		lenmax = MAX(lenmax, tmp);
+
 		printf("Collana massima di lunghezza %d\n",lenmax);
 
 		for(i = 0; i <= dati[zaffiro]; i++) {
