@@ -28,7 +28,7 @@ void main() {
 	}
 
 	fscanf(fp,"%d",&n);
-	
+
 	for(i = 0; i < n; i++) {
 		fscanf(fp,"%d%d%d%d",
 			&(dati[zaffiro]),
@@ -36,9 +36,9 @@ void main() {
 			&(dati[topazio]),
 			&(dati[smeraldo]));
 
-		sol_dim = dati[zaffiro] + 
-				dati[rubino] + 
-				dati[topazio] + 
+		sol_dim = dati[zaffiro] +
+				dati[rubino] +
+				dati[topazio] +
 				dati[smeraldo];
 
 
@@ -79,13 +79,12 @@ int recursion(pietre prec, int pos, int k, int dati[]) {
 
 
 int compatible(pietre prec, pietre att) {
-	if(prec == -1) return 1;
-
-	if( (prec == zaffiro && (att == zaffiro || att == rubino)) ||
+	if(	(prec == zaffiro && (att == zaffiro || att == rubino)) ||
 		(prec == smeraldo && (att == smeraldo || att == topazio)) ||
 		(prec == rubino && (att == smeraldo || att == topazio)) ||
-		(prec == topazio && (att == zaffiro || att == rubino)) ) 
+		(prec == topazio && (att == zaffiro || att == rubino)) ||
+		 prec == -1)
 		return 1;
-	
+
 	return 0;
 }

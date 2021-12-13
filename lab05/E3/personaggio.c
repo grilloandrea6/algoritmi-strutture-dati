@@ -237,15 +237,15 @@ int leggiPersonaggio(pg_t *pers, FILE *fp) {
 	int ret;
 	pers->equip.inUso = 0;
 	ret = fscanf(fp,"%s %s %s %d %d %d %d %d %d",
-		(*pers).codice,
-		(*pers).nome,
-		(*pers).classe,
-		&((*pers).stat.hp),
-		&((*pers).stat.mp),
-		&((*pers).stat.atk),
-		&((*pers).stat.def),
-		&((*pers).stat.mag),
-		&((*pers).stat.spr));	
+		pers->codice,
+		pers->nome,
+		pers->classe,
+		&(pers->stat.hp),
+		&(pers->stat.mp),
+		&(pers->stat.atk),
+		&(pers->stat.def),
+		&(pers->stat.mag),
+		&(pers->stat.spr));	
 	return (ret == 9);
 }
 

@@ -8,6 +8,8 @@ typedef enum {
 	zaffiro,rubino,topazio,smeraldo
 } pietre;
 
+int count = 0;
+
 int MAX( int a, int b);
 
 int fZ(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati);
@@ -19,10 +21,6 @@ void main() {
 	char filename[MAXL_FILENAME];
 	FILE* fp;
 	int i,j,k,l,n,n_prove,lenmax,tmp,dati[4],
-		maxZ = 0,
-		maxR = 0,
-		maxT = 0,
-		maxS = 0,
 		****memoizationZ,
 		****memoizationR,
 		****memoizationT,
@@ -39,64 +37,9 @@ void main() {
 		exit(EXIT_FAILURE);
 	}
 
-	// first reading of the file to get 
-	// the maximum dimensions for the matrix
 	fscanf(fp,"%d",&n_prove);
+
 	for(n = 0; n < n_prove; n++) {
-		fscanf(fp,"%d%d%d%d",
-			&(dati[zaffiro]),
-			&(dati[rubino]),
-			&(dati[topazio]),
-			&(dati[smeraldo]));
-		maxZ = MAX(maxZ,dati[zaffiro]);
-		maxR = MAX(maxR,dati[rubino]);
-		maxT = MAX(maxT,dati[topazio]);
-		maxS = MAX(maxS,dati[smeraldo]);
-
-	}
-
-	// allocate matrices
-	memoizationR = malloc((1 + maxZ) * sizeof(int ***));
-	memoizationZ = malloc((1 + maxZ) * sizeof(int ***));
-	memoizationT = malloc((1 + maxZ) * sizeof(int ***));
-	memoizationS = malloc((1 + maxZ) * sizeof(int ***));
-
-
-	for(i = 0; i <= maxZ; i++) {
-		memoizationZ[i] = malloc((1 + maxR) * sizeof(int **));
-		memoizationR[i] = malloc((1 + maxR) * sizeof(int **));
-		memoizationT[i] = malloc((1 + maxR) * sizeof(int **));
-		memoizationS[i] = malloc((1 + maxR) * sizeof(int **));
-
-		for(j = 0; j <= maxR; j++) {
-			memoizationZ[i][j] = malloc((1 + maxT) * sizeof(int *));
-			memoizationR[i][j] = malloc((1 + maxT) * sizeof(int *));
-			memoizationT[i][j] = malloc((1 + maxT) * sizeof(int *));
-			memoizationS[i][j] = malloc((1 + maxT) * sizeof(int *));
-
-		
-			for(k = 0; k <= maxT; k++) {
-				memoizationZ[i][j][k] = malloc((1 + maxS) * sizeof(int));
-				memoizationR[i][j][k] = malloc((1 + maxS) * sizeof(int));
-				memoizationT[i][j][k] = malloc((1 + maxS) * sizeof(int));
-				memoizationS[i][j][k] = malloc((1 + maxS) * sizeof(int));
-		
-				for(l = 0; l <= maxS; l++) {
-					memoizationZ[i][j][k][l] = -1;
-					memoizationR[i][j][k][l] = -1;
-					memoizationT[i][j][k][l] = -1;
-					memoizationS[i][j][k][l] = -1;
-				}
-			}
-		}
-	}
-
-	// re-read the file
-	rewind(fp);
-	// just to skip first number
-	fscanf(fp,"%d",&n_prove);
-
-	for(n = 0; n < n_prove; n++) {		
 		fscanf(fp,"%d%d%d%d",
 			&(dati[zaffiro]),
 			&(dati[rubino]),
@@ -111,6 +54,41 @@ void main() {
 			dati[smeraldo],
 			dati[zaffiro] + dati[rubino] + dati[topazio] + dati[smeraldo]);
 
+		memoizationZ = malloc((1 + dati[zaffiro]) * sizeof(int ***));
+		memoizationR = malloc((1 + dati[zaffiro]) * sizeof(int ***));
+		memoizationT = malloc((1 + dati[zaffiro]) * sizeof(int ***));
+		memoizationS = malloc((1 + dati[zaffiro]) * sizeof(int ***));
+
+
+		for(i = 0; i <= dati[zaffiro]; i++) {
+			memoizationZ[i] = malloc((1 + dati[rubino]) * sizeof(int **));
+			memoizationR[i] = malloc((1 + dati[rubino]) * sizeof(int **));
+			memoizationT[i] = malloc((1 + dati[rubino]) * sizeof(int **));
+			memoizationS[i] = malloc((1 + dati[rubino]) * sizeof(int **));
+
+			for(j = 0; j <= dati[rubino]; j++) {
+				memoizationZ[i][j] = malloc((1 + dati[topazio]) * sizeof(int *));
+				memoizationR[i][j] = malloc((1 + dati[topazio]) * sizeof(int *));
+				memoizationT[i][j] = malloc((1 + dati[topazio]) * sizeof(int *));
+				memoizationS[i][j] = malloc((1 + dati[topazio]) * sizeof(int *));
+
+			
+				for(k = 0; k <= dati[topazio]; k++) {
+					memoizationZ[i][j][k] = malloc((1 + dati[smeraldo]) * sizeof(int));
+					memoizationR[i][j][k] = malloc((1 + dati[smeraldo]) * sizeof(int));
+					memoizationT[i][j][k] = malloc((1 + dati[smeraldo]) * sizeof(int));
+					memoizationS[i][j][k] = malloc((1 + dati[smeraldo]) * sizeof(int));
+			
+					for(l = 0; l <= dati[smeraldo]; l++) {
+						memoizationZ[i][j][k][l] = -1;
+						memoizationR[i][j][k][l] = -1;
+						memoizationT[i][j][k][l] = -1;
+						memoizationS[i][j][k][l] = -1;
+					}
+				}
+			}
+		}
+
 		lenmax = fZ(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
 		
 		tmp = fR(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
@@ -123,37 +101,38 @@ void main() {
 		lenmax = MAX(lenmax, tmp);
 
 		printf("Collana massima di lunghezza %d\n",lenmax);
-	}
 
-	fclose(fp);
-	
-	// free matrices
-	for(i = 0; i <= maxZ; i++) {
-		for(j = 0; j <= maxR; j++) {
-			for(k = 0; k <= maxT; k++) {
-				free(memoizationZ[i][j][k]);
-				free(memoizationR[i][j][k]);
-				free(memoizationT[i][j][k]);
-				free(memoizationS[i][j][k]);
+		for(i = 0; i <= dati[zaffiro]; i++) {
+			for(j = 0; j <= dati[rubino]; j++) {
+				for(k = 0; k <= dati[topazio]; k++) {
+					free(memoizationZ[i][j][k]);
+					free(memoizationR[i][j][k]);
+					free(memoizationT[i][j][k]);
+					free(memoizationS[i][j][k]);
+				}
+				free(memoizationZ[i][j]);
+				free(memoizationR[i][j]);
+				free(memoizationT[i][j]);
+				free(memoizationS[i][j]);
 			}
-			free(memoizationZ[i][j]);
-			free(memoizationR[i][j]);
-			free(memoizationT[i][j]);
-			free(memoizationS[i][j]);
+			free(memoizationZ[i]);
+			free(memoizationR[i]);
+			free(memoizationT[i]);
+			free(memoizationS[i]);
 		}
-		free(memoizationZ[i]);
-		free(memoizationR[i]);
-		free(memoizationT[i]);
-		free(memoizationS[i]);
+		free(memoizationZ);
+		free(memoizationR);
+		free(memoizationT);
+		free(memoizationS);
+
 	}
-	free(memoizationZ);
-	free(memoizationR);
-	free(memoizationT);
-	free(memoizationS);
+	fclose(fp);
+	printf("count is %d\n\n",count);
 }
 
 int fZ(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	int a,b;
+	count++;
 	if(dati[zaffiro] == 0) return 0;
 
 	if(memoZ[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] != -1)
@@ -173,6 +152,7 @@ int fZ(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 
 int fR(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	int a,b;
+	count++;
 	if(dati[rubino] == 0) return 0;
 
 	if(memoR[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] != -1)
@@ -192,6 +172,7 @@ int fR(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 
 int fT(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	int a,b;
+	count++;
 	if(dati[topazio] == 0) return 0;
 
 	if(memoT[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] != -1)
@@ -211,6 +192,7 @@ int fT(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 
 int fS(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	int a,b;
+	count++;
 	if(dati[smeraldo] == 0) return 0;
 
 	if(memoS[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] != -1)

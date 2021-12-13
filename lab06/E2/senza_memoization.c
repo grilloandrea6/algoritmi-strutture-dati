@@ -8,6 +8,8 @@ typedef enum {
 	zaffiro,rubino,topazio,smeraldo
 } pietre;
 
+int count = 0;
+
 int MAX( int a, int b);
 
 int fZ(int *dati);
@@ -73,50 +75,59 @@ void main() {
 
 		printf("Collana massima di lunghezza %d\n",lenmax);
 		}
+	printf("count is %d\n\n",count);
 	fclose(fp);
 }
 
 int fZ(int *dati) {
 	int a,b;
+	count++;
 	if(dati[zaffiro] == 0) return 0;
 
 	dati[zaffiro]--;
 
 	a = fZ(dati);
 	b = fR(dati);
+	dati[zaffiro]++;
 	return (MAX(a,b) + 1);
 }
 
 int fR(int *dati) {
 	int a,b;
+	count++;
 	if(dati[rubino] == 0) return 0;
 
 	dati[rubino]--;
 
 	a = fS(dati);
 	b = fT(dati);
+	dati[rubino]++;
 	return (MAX(a,b) + 1);
 }
 
 int fT(int *dati) {
 	int a,b;
+	count++;
 	if(dati[topazio] == 0) return 0;
 
 	dati[topazio]--;
 
 	a = fZ(dati);
 	b = fR(dati);
+	dati[topazio]++;
 	return (MAX(a,b) + 1);
 }
 
 int fS(int *dati) {
 	int a,b;
+	count++;
 	if(dati[smeraldo] == 0) return 0;
 
 	dati[smeraldo]--;
 
 	a = fS(dati);
 	b = fT(dati);
+	dati[smeraldo]++;
 	return (MAX(a,b) + 1);
 }
 
