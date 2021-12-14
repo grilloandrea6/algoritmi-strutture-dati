@@ -6,10 +6,10 @@
 
 
 // funzioni interne al modulo
-void aggiungiNodo(tabPg_t *tabella, pg_t pers);
-int leggiPersonaggio(pg_t *pers, FILE *fp);
-void printPers(pg_t pers);
-nodoPg_t* ricercaNodoCodice(char *codice, tabPg_t *tabella);
+static void aggiungiNodo(tabPg_t *tabella, pg_t pers);
+static int leggiPersonaggio(pg_t *pers, FILE *fp);
+static void printPers(pg_t pers);
+static nodoPg_t* ricercaNodoCodice(char *codice, tabPg_t *tabella);
 
 tabPg_t *allocaTabellaPersonaggi() {
 	tabPg_t *tabella = malloc(sizeof(tabPg_t));
@@ -219,7 +219,7 @@ void freeTabella(tabPg_t *tabella) {
 }
 
 // funzioni interne al modulo
-void aggiungiNodo(tabPg_t *tabella, pg_t pers) {
+static void aggiungiNodo(tabPg_t *tabella, pg_t pers) {
 	nodoPg_t *nodo = malloc(sizeof(nodoPg_t));
 	nodo->val = pers;
 	nodo->next = NULL;
@@ -233,7 +233,7 @@ void aggiungiNodo(tabPg_t *tabella, pg_t pers) {
 	tabella->nPg++;
 }
 
-int leggiPersonaggio(pg_t *pers, FILE *fp) {
+static int leggiPersonaggio(pg_t *pers, FILE *fp) {
 	int ret;
 	pers->equip.inUso = 0;
 	ret = fscanf(fp,"%s %s %s %d %d %d %d %d %d",
@@ -249,7 +249,7 @@ int leggiPersonaggio(pg_t *pers, FILE *fp) {
 	return (ret == 9);
 }
 
-void printPers(pg_t pers) {
+static void printPers(pg_t pers) {
 	printf("%s %s %s %d %d %d %d %d %d\n",
 		pers.codice,
 		pers.nome,
@@ -270,7 +270,7 @@ void printPers(pg_t pers) {
 	return;
 }
 
-nodoPg_t* ricercaNodoCodice(char *codice, tabPg_t *tabella) {
+static nodoPg_t* ricercaNodoCodice(char *codice, tabPg_t *tabella) {
 	nodoPg_t *nodo;
 
 	// ricerca lineare ed eliminazione

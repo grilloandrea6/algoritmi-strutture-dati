@@ -1,7 +1,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-// costante che definisce se sto debuggando o no
+// costante che definisce se sto compilando in modalità debug o no
 #define DEBUGGING
 
 //macro per stampare solo se DEBUGGING è definita

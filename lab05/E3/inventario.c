@@ -6,9 +6,9 @@
 
 
 // funzioni interne al modulo
-inv_t leggiOggetto(FILE *fp);
-stat_t sommaStat(stat_t a, stat_t b);
-stat_t azzeraNegativi(stat_t stat);
+static inv_t leggiOggetto(FILE *fp);
+static stat_t sommaStat(stat_t a, stat_t b);
+static stat_t azzeraNegativi(stat_t stat);
 
 
 tabInv_t acquisisciInventarioFile(char *filename) {
@@ -84,7 +84,7 @@ stat_t calcolaStatistiche(stat_t sum, inv_t *vett[], int n) {
 	return azzeraNegativi(sum);
 }
 
-inv_t leggiOggetto(FILE *fp) {
+static inv_t leggiOggetto(FILE *fp) {
 	inv_t ogg;
 	fscanf(fp,"%s %s %d %d %d %d %d %d",
 		ogg.nome,
@@ -99,12 +99,12 @@ inv_t leggiOggetto(FILE *fp) {
 	return ogg;
 }
 
-stat_t sommaStat(stat_t a, stat_t b) {
+static stat_t sommaStat(stat_t a, stat_t b) {
 	stat_t ret = {a.hp + b.hp, a.mp + b.mp, a.atk + b.atk, a.def + b.def, a.mag + b.mag, a.spr + b.spr};
 	return ret;	
 }
 
-stat_t azzeraNegativi(stat_t stat) {
+static stat_t azzeraNegativi(stat_t stat) {
 	if(stat.hp < 0) stat.hp = 0;
 	if(stat.mp < 0) stat.mp = 0;
 	if(stat.atk < 0) stat.atk = 0;

@@ -32,23 +32,28 @@ int main() {
 #endif
 
 	acquisisciPersonaggiFile(filename,tabella_personaggi);
+
 #ifdef DEBUGGING
 	printf("Stampo i personaggi per debug.\n");
 	stampaPersonaggi(tabella_personaggi);
 	printf("\n\n");
 #endif
+
 #ifndef DEBUGGING
 	printf("Inserisci il nome del file da cui leggere l'inventario: ");
 	scanf("%s",filename);
 #else
 	strcpy(filename,"inventario.txt");
 #endif
+
 	tabella_inventario = acquisisciInventarioFile(filename);
+
 #ifdef DEBUGGING
 	printf("Stampo gli oggetti in inventario per debug.\n");
 	stampaOggetti(tabella_inventario);
 	printf("\n\n");
 #endif
+
 	while (menuParola(tabella_personaggi,tabella_inventario));
 
 	freeTabella(tabella_personaggi);
