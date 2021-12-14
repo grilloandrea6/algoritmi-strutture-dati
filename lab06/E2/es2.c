@@ -8,7 +8,7 @@ typedef enum {
 	zaffiro,rubino,topazio,smeraldo
 } pietre;
 
-int MAX( int a, int b);
+int max(int a, int b);
 
 int fZ(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati);
 int fR(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati);
@@ -48,10 +48,10 @@ void main() {
 			&(dati[rubino]),
 			&(dati[topazio]),
 			&(dati[smeraldo]));
-		maxZ = MAX(maxZ,dati[zaffiro]);
-		maxR = MAX(maxR,dati[rubino]);
-		maxT = MAX(maxT,dati[topazio]);
-		maxS = MAX(maxS,dati[smeraldo]);
+		maxZ = max(maxZ,dati[zaffiro]);
+		maxR = max(maxR,dati[rubino]);
+		maxT = max(maxT,dati[topazio]);
+		maxS = max(maxS,dati[smeraldo]);
 
 	}
 
@@ -96,7 +96,7 @@ void main() {
 	// just to skip first number
 	fscanf(fp,"%d",&n_prove);
 
-	for(n = 0; n < n_prove; n++) {		
+	for(n = 0; n < n_prove; n++) {
 		fscanf(fp,"%d%d%d%d",
 			&(dati[zaffiro]),
 			&(dati[rubino]),
@@ -114,13 +114,13 @@ void main() {
 		lenmax = fZ(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
 		
 		tmp = fR(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = MAX(lenmax, tmp);
+		lenmax = max(lenmax, tmp);
 
 		tmp = fT(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = MAX(lenmax, tmp);
+		lenmax = max(lenmax, tmp);
 
 		tmp = fS(memoizationZ, memoizationR, memoizationT, memoizationS, dati);
-		lenmax = MAX(lenmax, tmp);
+		lenmax = max(lenmax, tmp);
 
 		printf("Collana massima di lunghezza %d\n",lenmax);
 	}
@@ -166,9 +166,9 @@ int fZ(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 
 	dati[zaffiro]++;
 	
-	memoZ[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = MAX(a,b) + 1;
+	memoZ[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = max(a,b) + 1;
 
-	return (MAX(a,b) + 1);
+	return (max(a,b) + 1);
 }
 
 int fR(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
@@ -185,9 +185,9 @@ int fR(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 
 	dati[rubino]++;
 
-	memoR[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = MAX(a,b) + 1;
+	memoR[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = max(a,b) + 1;
 
-	return (MAX(a,b) + 1);
+	return (max(a,b) + 1);
 }
 
 int fT(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
@@ -204,9 +204,9 @@ int fT(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	
 	dati[topazio]++;
 	
-	memoT[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = MAX(a,b) + 1;
+	memoT[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = max(a,b) + 1;
 	
-	return (MAX(a,b) + 1);
+	return (max(a,b) + 1);
 }
 
 int fS(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
@@ -223,12 +223,12 @@ int fS(int ****memoZ, int ****memoR, int ****memoT, int ****memoS, int *dati) {
 	
 	dati[smeraldo]++;
 
-	memoS[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = MAX(a,b) + 1;
+	memoS[dati[zaffiro]][dati[rubino]][dati[topazio]][dati[smeraldo]] = max(a,b) + 1;
 	
-	return (MAX(a,b) + 1);
+	return (max(a,b) + 1);
 }
 
-int MAX( int a, int b) {
+int max( int a, int b) {
 	if (a > b)
 		return a;
 	return b;
