@@ -8,8 +8,8 @@ typedef struct {
 	int s,f;
 } att;
 
-
 int compatible(att a, att b);
+void sortAttivita(int n, att *v);
 void attSel(int n, att *val);
 int getDuration(att att);
 int displaySol(att *val, int *opt, int n);
@@ -47,7 +47,7 @@ void main() {
 
 	fclose(fp);
 
-	// TODO sorting data
+	sortAttivita(n_attivita,attivita);
 
 	attSel(n_attivita, attivita);
 
@@ -80,8 +80,20 @@ void attSel(int n, att *val) {
 	printf("Max time: %d\n",max);
 
 	displaySol(val,opt,max_index);
+}
 
-	exit(0);
+void sortAttivita(int n, att *v) {
+	int i,j;
+	att temp;
+	for(i = 0; i < n; i++) {
+		for(j = 0; j < n-i; j++) {
+			if((v[j].f == v[j+1].f) ? (v[j].s > v[j+1].s) : (v[j].f > v[j+1].f)) {
+				temp = v[j];
+				v[j] = v[j+1];
+				v[j+1] = temp;
+			}
+		}
+	}
 }
 
 int displaySol(att *val, int *opt, int n) {
