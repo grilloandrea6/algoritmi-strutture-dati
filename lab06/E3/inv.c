@@ -13,7 +13,7 @@ void stat_read(FILE *fp, stat_t *statp) {
 
 void stat_print(FILE *fp, stat_t *statp, int soglia) {
 	// soglia == 0 -> stampo statp
-	// soglia == 0 -> stampo statp o 1 se i valori sono minori di 0
+	// soglia == 1 -> stampo statp o 1 se i valori sono minori di 0
 	stat_t toPrint;
 	
 	toPrint.hp = !soglia ? statp->hp : (statp->hp > 1 ? statp->hp : 1);

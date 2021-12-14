@@ -25,11 +25,12 @@ equipArray_t equipArray_init() {
 }
 
 void equipArray_free(equipArray_t equipArray) {
-	if(equipArray != NULL && equipArray->array != NULL)
-		free(equipArray->array);
+	if(equipArray != NULL) {
+		if(equipArray->array != NULL)
+			free(equipArray->array);
 
-	if(equipArray != NULL)
 		free(equipArray);
+	}
 }
 
 /* quanti equipaggiamenti sono in uso */

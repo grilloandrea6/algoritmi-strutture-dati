@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
       printf("Inserire codice personaggio: ");
       scanf("%s", codiceRicerca);
       pgp = pgList_searchByCode(pgList, codiceRicerca);
-      if (pgp!=NULL) {
+      if (pgp != NULL) {
         pg_print(stdout, pgp, invArray);
       }
     } break;
