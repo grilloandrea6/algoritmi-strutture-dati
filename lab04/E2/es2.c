@@ -1,8 +1,3 @@
-/*
- *
- *
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -66,7 +61,6 @@ void main() {
 
 		switch (cmd) {
 			case c_nuovo:
-			printf("nuovo\n");
 				head = f_nuovo(head);
 				break;
 			case c_leggi:
