@@ -60,10 +60,8 @@ int recursion(tessera_t *tessere, cella_t *campo, int nr, int nc, int n_tessere,
 	}
 
 	// se la cella è già occupata
-	if(campo[pos].tess != -1) {
-		max_punt = recursion(tessere,campo,nr,nc,n_tessere,pos + 1, max_punt, max_sol);
-		return max_punt;
-	}
+	if(campo[pos].tess != -1)
+		return recursion(tessere,campo,nr,nc,n_tessere,pos + 1, max_punt, max_sol);
 
 	for(i = 0; i < n_tessere; i++) {
 		if(!(tessere[i].used)) {
