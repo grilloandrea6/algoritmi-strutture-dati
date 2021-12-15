@@ -41,8 +41,12 @@ int st_add(st_t st, char *name, char *subnet) {
 	return st->n - 1;
 }
 
-void st_get_sorted_indexes(st_t st, int *v, int n){
-	int i,j,temp;
+void st_get_sorted_indexes(st_t st, int *v){
+	int i, j, temp, n = st_get_n(st);
+
+	for(i = 0; i < n; i++) {
+		v[i] = i;
+	}
 
 	for(i = 0; i < n - 1; i++) {
 		for(j = 0; j < n - 1 - i; j++) {

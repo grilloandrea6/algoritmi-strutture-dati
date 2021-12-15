@@ -66,33 +66,23 @@ void graph_free(graph_t graph) {
 }
 
 void graph_print_sorted_table(graph_t graph) {
-	int i,j,k, *vect_totale = malloc(st_get_n(graph->tab) * sizeof(int)),
-			*vect_parziale = malloc(st_get_n(graph->tab) * sizeof(int));
+	int i,j,k, *vect = malloc(st_get_n(graph->tab) * sizeof(int));
 
-	for(i = 0; i < st_get_n(graph->tab); i++) {
-		vect_totale[i] = i;
-	}
-
-	st_get_sorted_indexes(graph->tab, vect_totale, st_get_n(graph->tab));
+	st_get_sorted_indexes(graph->tab, vect);
 	
 	for(i = 0; i < st_get_n(graph->tab); i++) {		
-		printf("%2d - %-10s %s\n",vect_totale[i],st_get_name(graph->tab,vect_totale[i]),st_get_subnet(graph->tab,vect_totale[i]));
+		printf("%2d - %-10s %s\n",vect[i],st_get_name(graph->tab,vect[i]),st_get_subnet(graph->tab,vect[i]));
 		k = 0;
 
 		for(j = 0; j < st_get_n(graph->tab); j++) {
-			if(graph->madj[vect_totale[i]][j] != 0) vect_parziale[k++] = j;
-		}
-		
-		st_get_sorted_indexes(graph->tab, vect_parziale, k);
-		
-		for(j = 0; j < k; j++) {
-			printf("\t\t\t%2d - %-10s %s %5d\n",vect_parziale[j],st_get_name(graph->tab,vect_parziale[j]),st_get_subnet(graph->tab,vect_parziale[j]),graph->madj[vect_totale[i]][vect_parziale[j]]);
+			if(graph->madj[vect[i]][vect[j]] != 0)
+				printf("\t\t\t%2d - %-10s %s %5d\n",vect[j],st_get_name(graph->tab,vect[j]),st_get_subnet(graph->tab,vect[j]),graph->madj[vect[i]][vect[j]]);
+
 		}
 		printf("\n");
 	}
 
-	free(vect_totale);
-	free(vect_parziale);
+	free(vect);
 }
 
 void graph_generate_adjacency_list(graph_t graph) {
