@@ -1,18 +1,21 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#define LEN 31
+
+
 typedef struct graph_s *graph_t;
 typedef struct {int v,w,flusso;} edge_t;
 
 
-graph_t graph_init();
-graph_t graph_readFile(char *filename);
-graph_t graph_generateAdjacencyList(graph_t graph);
+graph_t graph_load(FILE *fp);
+void graph_free(graph_t graph);
 
-int graph_matrix_complete_subgraph(graph_t graph, char* a, char *b, char *c);
-int graph_list_complete_subgraph(graph_t graph, char* a, char *b, char *c);
-
-
-
+void graph_print_sorted_table(graph_t graph);
+void graph_generate_adjacency_list(graph_t graph);
+int graph_complete_subgraph(graph_t graph, char* a, char *b, char *c, int matrice_lista);
+void graph_print_list(graph_t graph);
+void graph_print_matrix(graph_t graph);
+int graph_is_lista_generated(graph_t graph);
 
 #endif
