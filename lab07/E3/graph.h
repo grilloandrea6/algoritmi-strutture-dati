@@ -3,10 +3,7 @@
 
 #define LEN 31
 
-
 typedef struct graph_s *graph_t;
-typedef struct {int v,w,flusso;} edge_t;
-
 
 graph_t graph_load(FILE *fp);
 void graph_free(graph_t graph);
