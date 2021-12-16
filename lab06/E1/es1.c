@@ -80,6 +80,8 @@ void attSel(int n, att *val) {
 	printf("Max time: %d\n",max);
 
 	displaySol(val,opt,max_index);
+
+	free(opt);
 }
 
 void sortAttivita(int n, att *v) {
@@ -117,6 +119,8 @@ int displaySol(att *val, int *opt, int n) {
 		if(sol[i]) printf("(%d,%d) ", val[i].s,val[i].f);
 	}
 	printf("\n");
+
+	free(sol);
 }
 
 int getDuration(att att) {

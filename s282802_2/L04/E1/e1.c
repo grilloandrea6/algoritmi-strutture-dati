@@ -18,6 +18,8 @@ int main(){
 
 	powerset(0, sol, n_vertici, 0, 0,n_archi,matrice_incidenza);
 
+	free(sol);
+	free(used);
 	freeMatrice(matrice_incidenza,n_archi);
 }
 
@@ -53,9 +55,12 @@ int isSolution(int *sol, int N,int **matrice_incidenza,int n_archi){
 	}
 
 	for(i = 0; i < n_archi; i++)
-		if(archi[i] == 0)
+		if(archi[i] == 0) {
+			free(archi);
 			return 0;
+		}
 
+	free(archi);
 	return 1;
 }
 

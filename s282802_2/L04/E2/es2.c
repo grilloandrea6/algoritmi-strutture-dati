@@ -90,6 +90,11 @@ void main() {
  				break;
 		}
 	}
+
+	for(; head != NULL; head = t) {
+		t = head->next;
+		free(head);
+	}
 }
 
 comandi leggiComando () {
