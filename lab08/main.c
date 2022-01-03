@@ -2,9 +2,8 @@
 #include <stdlib.h>
 
 #include "title_collection.h"
-#include "title.h"
 
-#define N_SCELTE 7
+#define N_SCELTE 8
 #define MAXL 256
 
 void stampaMenu(char *scelte[], int *selezione){
@@ -20,7 +19,7 @@ void stampaMenu(char *scelte[], int *selezione){
 
 int main() {
 	FILE *fp;
-	int n_titoli,i,selezione,fineProgramma = 0;
+	int n_titoli,i,selezione,fineProgramma = 0,soglia;
 	char stringa[MAXL];
 	char *scelte[] = {
 			"Uscita",
@@ -29,7 +28,8 @@ int main() {
 			"Ricerca quotazione titolo",
 			"Ricerca quotazione minima e massima in intervallo date",
 			"Ricerca quotazione minima e massima in periodo intero",
-			"Stampa tutti i dati in memoria"
+			"Stampa tutti i dati in memoria",
+			"Bilancia albero"
 		};
 
 	title_t titolo;
@@ -90,7 +90,15 @@ int main() {
 
 		case 6: {
 			title_collection_print_all(collezione_titoli);
+		} break;
 
+		case 7: {			
+			printf("Inserisci nome titolo da cercare: ");
+			scanf("%s",stringa);
+			titolo = title_collection_search(collezione_titoli, stringa);
+			printf("Inserisci soglia S:");
+			scanf("%d",&soglia);
+			title_balance_tree(titolo, soglia);
 		} break;
 
 		default: {

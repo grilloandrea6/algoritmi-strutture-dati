@@ -44,6 +44,7 @@ void title_collection_read_title(title_collection_t collezione_titoli,FILE *fp) 
 
 	fscanf(fp,"%s",nome);
 	title = title_collection_search(collezione_titoli,nome);
+	
 	if(title != NULL) {
 		title_read(title,nome,fp);
 		return;

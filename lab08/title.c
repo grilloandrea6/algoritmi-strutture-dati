@@ -73,3 +73,8 @@ void title_search_quotation_interval_total(title_t t) {
 	
 	quotation_collection_search_interval_print(t->quotations, start,end);
 }
+
+
+void title_balance_tree(title_t title, int soglia) {
+	quotation_collection_balance(title->quotations,soglia);
+}

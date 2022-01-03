@@ -9,6 +9,7 @@ struct node {
 	} quot;
 	datetime_t date;
 	link left,right;
+	int N;
 };
 
 struct quotation_collection_s {
@@ -133,6 +134,7 @@ static link insertR(link h, datetime_t x) {
 		node->date = x;
 		node->quot.total_number = -1;
 		node->left = node->right = NULL;
+		node->N = 1;
 		return node;
 	}
 
@@ -140,17 +142,28 @@ static link insertR(link h, datetime_t x) {
 		h->left = insertR(h->left, x);
 	else
 		h->right = insertR(h->right, x);
+	h->N++;
 	return h;
 }
 
-static void printR(link h) {
+static void printR(link h, int strategy) {
 	if(h == NULL)
 		return;
+	if (strategy == 0) {
+				datetime_print(h->date);
+		quotation_print(h->quot);
+	}
 
-	printR(h->left);
-	datetime_print(h->date);
-	quotation_print(h->quot);
-	printR(h->right);
+	printR(h->left,strategy);
+	if(strategy == 1) {
+		datetime_print(h->date);
+		quotation_print(h->quot);
+	}
+	printR(h->right,strategy);
+	if(strategy == 2) {
+		datetime_print(h->date);
+		quotation_print(h->quot);
+	}
 }
 
 void quotation_collection_print(quotation_collection_t Q) {
@@ -158,7 +171,7 @@ void quotation_collection_print(quotation_collection_t Q) {
 		return;
 	printf("Data\t\tValore\t\tNumero\n");
 
-	printR(Q->head);
+	printR(Q->head,1);
 }
 
 
@@ -177,4 +190,115 @@ static void quotation_calculate(struct quot_s *quot, int n, float v) {
 
 static void quotation_print(struct quot_s quot) {
 	printf("\t%f\t%d\n",quot.value,quot.total_number);
+}
+
+static link rotR(link h) {
+link x = h->left;
+h->left = x->right;
+x->right = h;
+return x;
+}
+
+static link rotL(link h) {
+link x = h->right;
+h->right = x->left;
+x->left = h;
+return x;
+}
+
+static link partR(link h, int r) {
+  if(h == NULL || (h->left == NULL && h->right == NULL)) return h;
+  int t;
+  if(h->left != NULL)
+  	t = h->left->N;
+  else
+  	t = 0;
+  if ( t > r) {
+    h->left = partR(h->left, r);
+    h = rotR(h);
+  }
+  if ( t < r) {
+    h->right = partR(h->right, r-t-1);
+    h = rotL(h);
+  }
+  return h;
+}
+
+static int longestPathR(link h, int max);
+static int shortestPathR(link h, int lenght);
+
+
+
+static link balanceR(link h) {
+  int r;
+  if (h == NULL)// || h->left == NULL || h->right == NULL )
+    return h;
+
+  r = (h->N+1)/2-1;
+  h = partR(h, r);
+  h->left = balanceR(h->left);
+  h->right = balanceR(h->right);
+  return h;
+}
+
+void quotation_collection_balance(quotation_collection_t Q, int soglia) {
+	int shortest = shortestPathR(Q->head, 0),
+		longest = longestPathR(Q->head, 0);
+	if(longest / shortest > soglia) {
+		printf("Esecuzione bilanciamento.\n");
+		Q->head = balanceR(Q->head);
+	}
+	else
+		printf("Bilanciamento non necessario, rapporto sotto soglia.\n");
+}
+
+static int max(int a, int b) {
+	if (a > b)
+		return a;
+	return b;
+}
+static int min(int a, int b) {
+	if (a < b)
+		return a;
+	return b;
+}
+
+static int longestPathR(link h, int massimo) {
+	printf("longestPathR:\nh->date = ");
+	datetime_print(h->date);
+	printf("\nmax = %d\n\n",massimo);
+	int l = 0,r = 0;
+	if(h == NULL) {
+		printf("foglia, returning %d\n",massimo);
+		return massimo;
+	}
+
+	if(h->left != NULL) {
+		l = longestPathR(h->left, massimo + 1);
+	}
+
+	if(h->right != NULL) {
+		r = longestPathR(h->right, massimo + 1);
+	}
+printf("returning l%d,r%d, %d\n", l,r,max(l,max(r,massimo)));
+	return max(l,max(r,massimo));
+}
+
+
+static int shortestPathR(link h, int lenght) {
+	int l = INT_MAX,r = INT_MAX;
+	if(h == NULL)
+		return lenght - 1;
+
+	if(h->left == NULL && h->right == NULL)
+		return lenght;
+
+	if(h->left != NULL)
+		l = shortestPathR(h->left, lenght + 1);
+	
+	if(h->right != NULL)
+		r = shortestPathR(h->right, lenght + 1);
+
+
+	return min(l,r);
 }

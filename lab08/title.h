@@ -24,4 +24,5 @@ void title_read_quotations(title_t title, FILE *fp);
 void title_search_quotation(title_t title);
 void title_search_quotation_interval(title_t title);
 void title_search_quotation_interval_total(title_t title);
+void title_balance_tree(title_t title, int soglia);
 #endif

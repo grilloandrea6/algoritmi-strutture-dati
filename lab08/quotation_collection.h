@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "datetime.h"
+
 
 typedef struct quotation_collection_s *quotation_collection_t;
 /*typedef struct {
@@ -20,4 +22,6 @@ void quotation_collection_print(quotation_collection_t Q);
 
 void quotation_collection_search_print(quotation_collection_t Q, datetime_t date);
 void quotation_collection_search_interval_print(quotation_collection_t Q, datetime_t start,datetime_t end);
+void quotation_collection_balance(quotation_collection_t Q, int soglia);
+
 #endif
