@@ -1,0 +1,48 @@
+OKmanca void nella freeMat
+
+OKvirgola for ultimo rigo pagina 10 pdf
+
+OKfor interno checkRegione
+
+
+OKparametri s_i e s_j in solveR
+
+OKpagina 11 dove si incrementa la matrice manca underscore
+
+
+OKmanca inizializzazione di flag_found
+
+
+nella verifica && ret nei for di controllo
+
+controllo riga 112 - dato il formato del file scelto è abbastanza stupido fare questo controllo
+
+
+149da qualche parte rimossa una j innecessaria
+
+
+f(BT t) {
+	
+}
+fR(BT t, int prec) {
+	int prec = fR(t->left);
+	if(prec > t->val)
+
+
+}
+
+int solve() {}
+	for(n_gruppi = 0; n_gruppi < n_persone; n_gruppi++)
+		solveR()
+
+
+
+solveR() {
+	if(pos > nPersone) {
+		controlla
+	}
+
+	for( i = 0; i < nGruppi; i++)
+		if persona[pos] è amica di tutte le persone nel gruppo i
+			aggiungi persona e ricorri
+}
